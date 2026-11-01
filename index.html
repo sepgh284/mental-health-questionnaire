@@ -3,31 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پرسشنامه</title>
+    <title>پرسشنامه سلامت روان</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Tahoma, Arial, sans-serif; background: #eef2f5; color: #333; line-height: 1.6; padding: 20px; margin: 0; }
-        .container { max-width: 800px; margin: 20px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h3 { color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 5px; margin-top: 40px; font-size: 18px; }
-        .instruction { font-size: 14px; color: #555; background: #f8f9fa; padding: 10px; border-radius: 5px; border-right: 4px solid #0056b3; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
-        select, input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; box-sizing: border-box; }
-        .question-block { margin-bottom: 25px; padding: 15px; background: #fafafa; border: 1px solid #eee; border-radius: 8px; }
-        .question-text { font-weight: bold; margin-bottom: 15px; font-size: 15px; }
-        .options { display: flex; flex-wrap: wrap; gap: 15px; }
-        .options label { font-weight: normal; display: inline-flex; align-items: center; cursor: pointer; margin: 0; font-size: 14px; }
-        .options input[type="radio"] { margin-left: 8px; cursor: pointer; width: 18px; height: 18px; }
-        button { display: block; width: 100%; background: #28a745; color: #fff; border: none; padding: 15px; font-size: 18px; border-radius: 5px; cursor: pointer; margin-top: 30px; font-family: inherit; font-weight: bold; transition: background 0.3s; }
-        button:hover { background: #218838; }
-        .hidden { display: none; }
-        
-        /* استایل‌های مربوط به پیام نتیجه */
-        .result-box { background: #fff; padding: 25px; border-radius: 10px; border-top: 5px solid #0056b3; margin-top: 20px; }
-        .result-item { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #ddd; }
-        .result-item:last-child { border-bottom: none; }
-        .result-title { font-weight: bold; color: #0056b3; font-size: 16px; margin-bottom: 8px; }
-        .result-text { font-size: 14px; color: #333; text-align: justify; }
-        .disclaimer { background: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; font-size: 13px; margin-top: 25px; text-align: justify; border: 1px solid #ffeeba; }
+        :root { --ink:#1f2d3d; --muted:#5d6b7a; --lapis:#1c3d7a; --turq:#0f8b8d; --turq-d:#0b6e70; --gold:#c8a04a; --paper:#fffdf8; --bg:#f3efe6; --line:#e7e0d0; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Vazirmatn', Tahoma, Arial, sans-serif; background: var(--bg); background-image: radial-gradient(circle at 1px 1px, rgba(28,61,122,.08) 1px, transparent 0); background-size: 22px 22px; color: var(--ink); line-height: 1.9; padding: 14px; margin: 0; }
+        input, select, button, textarea { font-family: inherit; }
+        .container { max-width: 820px; margin: 14px auto; background: var(--paper); padding: 0 0 32px; border-radius: 18px; box-shadow: 0 10px 40px rgba(28,61,122,.14); overflow: hidden; border: 1px solid var(--line); }
+        #surveyForm, .result-body { padding: 0 28px; }
+
+        /* سربرگ */
+        .hero { position: relative; background: linear-gradient(135deg, var(--lapis), var(--turq)); color: #fff; text-align: center; padding: 40px 24px 38px; }
+        .hero::before { content: ""; position: absolute; inset: 0; background-image: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,.07) 0 15deg, transparent 15deg 30deg); background-size: 56px 56px; }
+        .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: repeating-linear-gradient(90deg, var(--gold) 0 18px, transparent 18px 24px); }
+        .hero > * { position: relative; }
+        .hero .ornament { color: var(--gold); font-size: 22px; letter-spacing: 10px; }
+        .hero h1 { margin: 4px 0 8px; font-size: 28px; font-weight: 800; }
+        .hero p { margin: 0 auto; max-width: 520px; font-size: 14px; opacity: .95; }
+
+        /* نوار پیشرفت */
+        .progress-wrap { position: sticky; top: 0; z-index: 5; background: rgba(255,253,248,.94); backdrop-filter: blur(6px); padding: 10px 28px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--muted); }
+        .progress-track { flex: 1; height: 8px; background: #ece7da; border-radius: 99px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--turq), var(--gold)); border-radius: 99px; transition: width .4s ease; }
+
+        h3 { color: var(--lapis); font-size: 18px; font-weight: 700; margin: 38px 0 14px; padding-bottom: 8px; border-bottom: 1px dashed var(--gold); display: flex; align-items: center; gap: 10px; }
+        h3::before { content: ""; width: 10px; height: 10px; background: var(--gold); transform: rotate(45deg); flex: none; }
+        .instruction { font-size: 14px; color: #4b5866; background: #f6f3ea; padding: 12px 14px; border-radius: 10px; border-right: 4px solid var(--turq); margin-bottom: 20px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; }
+        select, input[type="number"] { width: 100%; padding: 11px 12px; border: 1.5px solid #d9d2c0; border-radius: 10px; background: #fff; font-size: 14px; transition: border-color .2s, box-shadow .2s; }
+        select:focus, input[type="number"]:focus { outline: none; border-color: var(--turq); box-shadow: 0 0 0 3px rgba(15,139,141,.18); }
+
+        .question-block { margin-bottom: 16px; padding: 16px 18px; background: #fff; border: 1px solid var(--line); border-right: 4px solid var(--turq); border-radius: 12px; animation: fadeIn .35s ease; }
+        .question-block.follow { margin-right: 16px; border-right-color: var(--gold); background: #fffcf3; }
+        .question-text { font-weight: 700; margin-bottom: 12px; font-size: 15px; }
+        .options { display: flex; flex-wrap: wrap; gap: 10px; }
+        .options label { font-weight: 400; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; margin: 0; font-size: 14px; padding: 8px 14px; border: 1.5px solid var(--line); border-radius: 12px; background: #fcfbf7; transition: all .15s; line-height: 1.7; }
+        .options label:hover { border-color: var(--turq); background: #f0f9f9; }
+        .options label:has(input:checked) { border-color: var(--turq); background: #e4f4f4; color: var(--turq-d); font-weight: 500; }
+        .options input[type="radio"] { cursor: pointer; width: 18px; height: 18px; margin: 0; accent-color: var(--turq); flex: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+        button { display: block; width: 100%; background: linear-gradient(135deg, var(--turq), var(--lapis)); color: #fff; border: none; padding: 15px; font-size: 18px; border-radius: 12px; cursor: pointer; margin-top: 30px; font-weight: 700; transition: transform .15s, box-shadow .2s; box-shadow: 0 6px 16px rgba(15,139,141,.3); }
+        button:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(15,139,141,.38); }
+        button:disabled { opacity: .7; cursor: wait; }
+        button.btn-outline { background: #fff; color: var(--lapis); border: 1.5px solid var(--lapis); box-shadow: none; font-size: 15px; padding: 11px; }
+        .hidden { display: none !important; }
+
+        /* نتایج */
+        .result-hero { text-align: center; padding: 34px 20px 10px; }
+        .result-hero .check { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #2e9e6b, var(--turq)); color: #fff; font-size: 34px; line-height: 64px; margin: 0 auto 12px; box-shadow: 0 6px 18px rgba(46,158,107,.35); }
+        .result-hero h2 { margin: 0 0 4px; color: var(--lapis); font-size: 22px; }
+        .result-hero p { margin: 0; color: var(--muted); font-size: 13px; }
+        .summary-card, .result-card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-top: 18px; box-shadow: 0 4px 14px rgba(28,61,122,.05); }
+        .summary-card h4 { margin: 0 0 14px; color: var(--lapis); font-size: 16px; }
+        .sum-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 13px; }
+        .sum-name { width: 70px; font-weight: 700; flex: none; }
+        .sum-track { flex: 1; height: 16px; background: #efeadc; border-radius: 99px; overflow: hidden; }
+        .sum-fill { height: 100%; width: 0; border-radius: 99px; transition: width 1.1s cubic-bezier(.2,.8,.2,1); }
+        .sum-level { width: 78px; text-align: left; font-weight: 700; flex: none; }
+        .summary-note { font-size: 11.5px; color: var(--muted); margin: 6px 0 0; }
+        .card-top { display: flex; align-items: center; gap: 16px; }
+        .ring { width: 84px; height: 84px; flex: none; }
+        .ring text { font-family: inherit; }
+        .ring-fg { transition: stroke-dasharray 1.1s cubic-bezier(.2,.8,.2,1); }
+        .card-title { font-size: 17px; font-weight: 800; color: var(--lapis); }
+        .badge { display: inline-block; color: #fff; font-size: 12px; font-weight: 700; padding: 1px 12px; border-radius: 99px; margin-top: 4px; }
+        .card-about { font-size: 12.5px; color: var(--muted); margin-top: 4px; line-height: 1.8; }
+        .gauge { position: relative; margin: 26px 0 4px; }
+        .gauge-track { display: flex; height: 14px; border-radius: 99px; overflow: hidden; gap: 2px; }
+        .gauge-track div { flex: 1; }
+        .gauge-marker { position: absolute; top: -6px; right: 0; width: 4px; height: 26px; background: var(--ink); border-radius: 3px; transform: translateX(50%); box-shadow: 0 0 0 3px #fff; transition: right 1.1s cubic-bezier(.2,.8,.2,1); }
+        .gauge-labels { display: flex; margin-top: 8px; }
+        .gauge-labels span { flex: 1; text-align: center; font-size: 10.5px; color: var(--muted); line-height: 1.4; }
+        .gauge-labels span.on { color: var(--ink); font-weight: 700; }
+        .result-text { font-size: 14px; color: #333; text-align: justify; margin-top: 14px; padding: 12px 14px; background: #f8f6ef; border-radius: 10px; }
+        .tips { margin: 14px 0 0; padding: 0; list-style: none; }
+        .tips-title { font-size: 13px; font-weight: 700; color: var(--turq-d); margin-top: 16px; }
+        .tips li { position: relative; padding-right: 22px; font-size: 13.5px; margin-top: 6px; }
+        .tips li::before { content: "✦"; position: absolute; right: 0; color: var(--gold); }
+        .support-box { background: #fdecec; border: 1px solid #f3c1c1; color: #8a2a2a; border-radius: 14px; padding: 16px 18px; margin-top: 18px; font-size: 14px; }
+        .support-box b { color: #6d1616; }
+        .disclaimer { background: #fff3cd; color: #856404; padding: 15px; border-radius: 10px; font-size: 13px; margin-top: 22px; text-align: justify; border: 1px solid #ffeeba; }
+
+        @media (max-width: 520px) {
+            #surveyForm, .result-body { padding: 0 14px; }
+            .progress-wrap { padding: 10px 14px; }
+            .question-block.follow { margin-right: 8px; }
+            .hero h1 { font-size: 23px; }
+            .gauge-labels span { font-size: 9px; }
+            .sum-name { width: 56px; } .sum-level { width: 62px; }
+        }
+        @media print {
+            body { background: #fff; padding: 0; }
+            .container { box-shadow: none; border: none; }
+            .btn-outline { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -35,7 +109,16 @@
 <div class="container">
     <!-- فرم اصلی -->
     <div id="formSection">
-        <p style="text-align: center; color: #666; margin-bottom: 30px;">با سلام، لطفاً به سوالات زیر با دقت و صداقت پاسخ دهید. اطلاعات شما محرمانه خواهد ماند.</p>
+        <div class="hero">
+            <div class="ornament">❖ ❖ ❖</div>
+            <h1>پرسشنامه سلامت روان</h1>
+            <p>با سلام، لطفاً به سوالات زیر با دقت و صداقت پاسخ دهید. اطلاعات شما محرمانه خواهد ماند.</p>
+        </div>
+        <div class="progress-wrap">
+            <span>پیشرفت شما</span>
+            <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+            <span id="progressText">۰٪</span>
+        </div>
         
         <form id="surveyForm">
             <!-- بخش دموگرافیک -->
@@ -91,26 +174,28 @@
     </div>
 
     <!-- پیام نتیجه -->
-    <div id="resultSection" class="hidden result-box">
-        <h2 style="text-align: center; color: #28a745; margin-bottom: 20px;">✅ پاسخ‌های شما با موفقیت ثبت شد</h2>
-        
-        <div class="result-item">
-            <div class="result-title">تحلیل سطح افسردگی:</div>
-            <div class="result-text" id="depressionResult"></div>
+    <div id="resultSection" class="hidden">
+        <div class="result-hero">
+            <div class="check">✓</div>
+            <h2>پاسخ‌های شما با موفقیت ثبت شد</h2>
+            <p>در ادامه، نتایج و تفسیر پاسخ‌های شما را مشاهده می‌کنید</p>
         </div>
-        
-        <div class="result-item">
-            <div class="result-title">تحلیل سطح اضطراب:</div>
-            <div class="result-text" id="anxietyResult"></div>
-        </div>
-        
-        <div class="result-item">
-            <div class="result-title">تحلیل نگرانی جسمانی (خودبیمارانگاری):</div>
-            <div class="result-text" id="hypochondriaResult"></div>
-        </div>
-        
-        <div class="disclaimer">
-            <b>توجه:</b> این نتایج صرفاً بر اساس پاسخ‌های شما به این پرسشنامه به دست آمده است و جایگزین تشخیص تخصصی روان‌شناس نیست. اگر احساس می‌کنید این نشانه‌ها بر زندگی روزمره شما تأثیر گذاشته است، لطفاً با یک متخصص سلامت روان مشورت کنید.
+        <div class="result-body">
+            <div class="summary-card">
+                <h4>📊 نمای کلی نتایج</h4>
+                <div id="summaryChart"></div>
+                <p class="summary-note">طول هر نوار نشان‌دهنده‌ی سطح شدت نشانه‌ها در مقیاس همان پرسشنامه است.</p>
+            </div>
+            <div id="supportBox" class="support-box hidden">
+                <b>💙 شما تنها نیستید.</b> اگر احساس ناامیدی یا افکار آسیب به خود دارید، همین حالا با
+                <b>۱۲۳</b> (اورژانس اجتماعی) یا <b>۱۴۸۰</b> (صدای مشاور بهزیستی) تماس بگیرید؛ هر دو رایگان هستند.
+                در شرایط خطر فوری با اورژانس <b>۱۱۵</b> تماس بگیرید.
+            </div>
+            <div id="resultCards"></div>
+            <div class="disclaimer">
+                <b>توجه:</b> این نتایج صرفاً بر اساس پاسخ‌های شما به این پرسشنامه به دست آمده است و جایگزین تشخیص تخصصی روان‌شناس نیست. اگر احساس می‌کنید این نشانه‌ها بر زندگی روزمره شما تأثیر گذاشته است، لطفاً با یک متخصص سلامت روان مشورت کنید.
+            </div>
+            <button type="button" class="btn-outline" onclick="window.print()">🖨️ ذخیره / چاپ نتایج</button>
         </div>
     </div>
 </div>
@@ -120,6 +205,10 @@
     // ⚠️ آدرس Web App خود را اینجا قرار دهید ⚠️
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyENTKYWDjZ8hxf0ZusY-vHdgZf2TQ4rY5BC6Dt-96GSBFQA8HfWLA2I5rOgNmRem46/exec'; 
     // ====================================================
+
+    // تبدیل ارقام به فارسی
+    const toFa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+    const faNum = n => (n < 0 ? '−' : '') + toFa(Math.abs(n));
 
     // 1. ساخت سوالات DASS-21 (کامل)
     const dassQuestions = [
@@ -131,7 +220,7 @@
         let num = index + 1;
         dassHTML += `
         <div class="question-block">
-            <div class="question-text">${num}. ${q}</div>
+            <div class="question-text">${toFa(num)}. ${q}</div>
             <div class="options">
                 <label><input type="radio" name="Q${num}" value="0" required> اصلاً</label>
                 <label><input type="radio" name="Q${num}" value="1"> کم</label>
@@ -188,7 +277,7 @@
         // شناسه برای هر بلوک اضافه شد تا بتوان آن را به‌صورت پویا نمایش/مخفی کرد
         hypHTML += `
         <div class="question-block" id="block-H${q.id}">
-            <div class="question-text">${q.id}. ${q.text}</div>
+            <div class="question-text">${toFa(q.id)}. ${q.text}</div>
             <div class="options">${optionsHTML}</div>
         </div>`;
     });
@@ -324,16 +413,32 @@
         return computeRawHypScore() + getAgeCorrection(age);
     }
 
+    // نوار پیشرفت (فقط سؤال‌های قابل‌نمایش)
+    function updateProgress() {
+        let total = 21, done = form.querySelectorAll('#dassContainer input:checked').length;
+        for (let i = 1; i <= 36; i++) {
+            if (!hypVisible[i]) continue;
+            total++;
+            if (getHypAnswer(i) !== null) done++;
+        }
+        const pct = Math.round(done / total * 100);
+        document.getElementById('progressBar').style.width = pct + '%';
+        document.getElementById('progressText').innerText = toFa(pct) + '٪';
+    }
+
     // بازمحاسبه کامل (نمایش + نمره)
     function recalc() {
         updateHypVisibility();
         currentHypScore = computeFinalHypScore();
+        updateProgress();
     }
 
     // با هر تغییر پاسخ یا سن، بلافاصله اجرا می‌شود
     form.addEventListener('change', recalc);
     form.addEventListener('input', recalc);
     window.addEventListener('pageshow', recalc);
+    // سؤال‌های شرطی با ظاهر متفاوت (کمی تورفتگی و نوار طلایی) نمایش داده می‌شوند
+    Object.keys(hypConditions).forEach(id => document.getElementById('block-H' + id).classList.add('follow'));
     recalc();
 
     form.addEventListener('submit', e => {
@@ -395,7 +500,8 @@
         });
     });
 
-    function showResults(dep, anx, hyp) {
+    // متن‌های تفسیر (بدون تغییر نسبت به نسخه قبلی)
+    function buildTexts(dep, anx, hyp) {
         // متن‌های افسردگی
         let depText = "";
         if (dep <= 9) depText = "نمره شما نشان می‌دهد که در حال حاضر نشانه‌های قابل توجهی از افسردگی در شما دیده نمی‌شود. به نظر می‌رسد از نظر خلق و خو در وضعیت مناسبی قرار دارید.";
@@ -421,15 +527,121 @@
         else if (hyp <= 60) hypText = "نمره شما نشان می‌دهد که به طور جدی خود را بیمار می‌انگارید و احتمالاً علاقه زیادی به امور پزشکی و داروها دارید. توصیه می‌شود با یک روان‌شناس درباره این نگرانی‌ها صحبت کنید.";
         else hypText = "نمره شما نشان می‌دهد که سطح نگرانی شما درباره سلامت جسمانی در بالاترین حد قرار دارد. بهتر است برای یک معاینه پزشکی کامل اقدام کنید و سپس برای مدیریت اضطراب ناشی از آن، از یک متخصص روان‌شناسی کمک بگیرید.";
 
-        // تزریق متن‌ها به HTML
-        document.getElementById('depressionResult').innerText = depText;
-        document.getElementById('anxietyResult').innerText = anxText;
-        document.getElementById('hypochondriaResult').innerText = hypText;
+        return { depText, anxText, hypText };
+    }
 
-        // جابه‌جایی نمایش
+    // ---------- تعریف بخش‌های نتیجه ----------
+    const resultDefs = {
+        dep: {
+            title: 'افسردگی', icon: '🌧️', scale: '۰ تا ۴۲', max: 42, tier: [0, 0, 1, 2, 2],
+            about: 'این بخش با هفت گویه‌ی مقیاس DASS-21، نشانه‌هایی مانند بی‌انگیزگی، ناامیدی و کاهش احساس ارزشمندی را می‌سنجد.',
+            bands: [{ max: 9, label: 'طبیعی', color: '#2e9e6b' }, { max: 13, label: 'خفیف', color: '#8bc34a' }, { max: 20, label: 'متوسط', color: '#f2b134' }, { max: 27, label: 'شدید', color: '#ef7d3b' }, { max: 42, label: 'بسیار شدید', color: '#d64545' }],
+            tips: [
+                ['خواب منظم و کافی را حفظ کنید.', 'هر روز کمی فعالیت بدنی سبک، مثل نیم‌ساعت پیاده‌روی، داشته باشید.', 'ارتباط با دوستان و خانواده را ادامه دهید.'],
+                ['یک برنامه‌ی روزانه‌ی ساده بسازید و کارهای لذت‌بخش را در آن بگنجانید.', 'با فردی مورد اعتماد درباره‌ی احساستان صحبت کنید.', 'اگر نشانه‌ها بیش از دو هفته ادامه یافت، با مشاور مشورت کنید.'],
+                ['در اسرع وقت با روان‌شناس یا روان‌پزشک مشورت کنید.', 'تنها نمانید و با نزدیکانتان در میان بگذارید.', 'تا بهتر شدن حال‌تان، از تصمیم‌های بزرگ زندگی پرهیز کنید.']
+            ]
+        },
+        anx: {
+            title: 'اضطراب', icon: '🌊', scale: '۰ تا ۴۲', max: 42, tier: [0, 0, 1, 2, 2],
+            about: 'این بخش با هفت گویه‌ی مقیاس DASS-21، نشانه‌هایی مانند تپش قلب، لرزش، ترس بی‌دلیل و تنش جسمی را می‌سنجد.',
+            bands: [{ max: 7, label: 'طبیعی', color: '#2e9e6b' }, { max: 9, label: 'خفیف', color: '#8bc34a' }, { max: 14, label: 'متوسط', color: '#f2b134' }, { max: 19, label: 'شدید', color: '#ef7d3b' }, { max: 42, label: 'بسیار شدید', color: '#d64545' }],
+            tips: [
+                ['تنفس عمیق و ورزش منظم را ادامه دهید.', 'مصرف کافئین را متعادل نگه دارید.', 'برای استراحت در برنامه‌ی روزانه‌تان زمان بگذارید.'],
+                ['تنفس شکمی را روزی دو بار و هر بار پنج دقیقه تمرین کنید.', 'آرام‌سازی تدریجی عضلات را امتحان کنید.', 'نگرانی‌هایتان را بنویسید و برای هرکدام یک گام عملی کوچک تعیین کنید.'],
+                ['درباره‌ی درمان‌های مؤثر، مثل درمان شناختی-رفتاری، با روان‌شناس صحبت کنید.', 'مصرف کافئین و محرک‌ها را کم کنید.', 'در اوج اضطراب، تمرین «۵-۴-۳-۲-۱» را انجام دهید: پنج چیز ببینید، چهار چیز لمس کنید، سه صدا بشنوید، دو بو را حس کنید و یک مزه را بچشید.']
+            ]
+        },
+        hyp: {
+            title: 'نگرانی جسمانی (خودبیمارانگاری)', icon: '🩺', scale: 'حدود ۰ تا ۸۰', max: 80, tier: [0, 0, 1, 1, 2, 2],
+            about: 'این بخش میزان نگرانی درباره‌ی بیماری و توجه به نشانه‌های بدنی را می‌سنجد. نمره‌ی نمایش‌داده‌شده پس از اصلاح سنی است.',
+            bands: [{ max: 10, label: 'بسیار کم', color: '#2e9e6b' }, { max: 20, label: 'هنجار', color: '#7bbf5a' }, { max: 30, label: 'کمی بالا', color: '#e3c13b' }, { max: 40, label: 'نسبتاً بالا', color: '#f2a23a' }, { max: 60, label: 'جدی', color: '#ef7d3b' }, { max: 80, label: 'بسیار شدید', color: '#d64545' }],
+            tips: [
+                ['همین توجه متعادل به سلامت را حفظ کنید.', 'معاینه‌های دوره‌ای معمول را فراموش نکنید.', 'خواب و تغذیه‌ی مناسب را در اولویت بگذارید.'],
+                ['از جست‌وجوی مکرر نشانه‌های بیماری در اینترنت پرهیز کنید.', 'برای نگرانی‌های سلامتی، فقط یک مرجع معتبر، یعنی پزشک خود را در نظر بگیرید.', 'تکرار معاینه‌ی بدن و کنترل نبض یا دمای بدن را به‌تدریج کم کنید.'],
+                ['درباره‌ی نگرانی‌های سلامتتان با پزشک و در صورت نیاز با روان‌شناس صحبت کنید.', 'رفتارهای اطمینان‌جویی، مثل پرس‌وجوی مکرر و معاینه‌های پشت‌سرهم، را به‌تدریج کم کنید.', 'درمان شناختی-رفتاری برای اضطراب سلامت مؤثر شناخته شده است.']
+            ]
+        }
+    };
+
+    function levelOf(score, bands) {
+        const i = bands.findIndex(b => score <= b.max);
+        return i === -1 ? bands.length - 1 : i;
+    }
+
+    // موقعیت نشانگر روی نوار (درصد از سمت راست)
+    function gaugePos(score, bands, level) {
+        const lo = level === 0 ? 0 : bands[level - 1].max + 1;
+        const hi = bands[level].max;
+        const frac = hi > lo ? Math.min(1, Math.max(0, (score - lo) / (hi - lo))) : 0.5;
+        return Math.min(98, Math.max(2, (level + frac) / bands.length * 100));
+    }
+
+    function cardHTML(def, score, text, level) {
+        const b = def.bands[level], tips = def.tips[def.tier[level]];
+        const pct = Math.min(1, Math.max(0, score / def.max));
+        const dash = (pct * 213.6).toFixed(1);
+        const pos = gaugePos(score, def.bands, level).toFixed(1);
+        const segs = def.bands.map(x => `<div style="background:${x.color}"></div>`).join('');
+        const labels = def.bands.map((x, i) => `<span class="${i === level ? 'on' : ''}">${x.label}</span>`).join('');
+        return `
+        <div class="result-card">
+            <div class="card-top">
+                <svg class="ring" viewBox="0 0 80 80" aria-hidden="true">
+                    <circle cx="40" cy="40" r="34" fill="none" stroke="#efeadc" stroke-width="8"/>
+                    <circle class="ring-fg" cx="40" cy="40" r="34" fill="none" stroke="${b.color}" stroke-width="8" stroke-linecap="round" stroke-dasharray="0 214" data-dash="${dash}" transform="rotate(-90 40 40)"/>
+                    <text x="40" y="47" text-anchor="middle" font-size="21" font-weight="800" fill="#1f2d3d">${faNum(score)}</text>
+                </svg>
+                <div>
+                    <div class="card-title">${def.icon} تحلیل سطح ${def.title}</div>
+                    <span class="badge" style="background:${b.color}">سطح: ${b.label}</span>
+                    <div class="card-about">${def.about}</div>
+                </div>
+            </div>
+            <div class="gauge">
+                <div class="gauge-track">${segs}</div>
+                <div class="gauge-marker" data-right="${pos}"></div>
+                <div class="gauge-labels">${labels}</div>
+            </div>
+            <div class="result-text">${text}</div>
+            <div class="tips-title">پیشنهادهای کاربردی</div>
+            <ul class="tips">${tips.map(t => `<li>${t}</li>`).join('')}</ul>
+        </div>`;
+    }
+
+    function showResults(dep, anx, hyp) {
+        const t = buildTexts(dep, anx, hyp);
+        const items = [['dep', dep, t.depText], ['anx', anx, t.anxText], ['hyp', hyp, t.hypText]];
+        let cards = '', summary = '';
+        const levels = {};
+        items.forEach(([key, score, text]) => {
+            const def = resultDefs[key];
+            const level = levelOf(score, def.bands);
+            levels[key] = level;
+            const b = def.bands[level];
+            const w = ((level + 1) / def.bands.length * 100).toFixed(0);
+            const shortName = key === 'hyp' ? 'نگرانی جسمانی' : def.title;
+            summary += `<div class="sum-row"><span class="sum-name">${shortName}</span><div class="sum-track"><div class="sum-fill" style="background:${b.color}" data-w="${w}"></div></div><span class="sum-level" style="color:${b.color}">${b.label}</span></div>`;
+            cards += cardHTML(def, score, text, level);
+        });
+        document.getElementById('summaryChart').innerHTML = summary;
+        document.getElementById('resultCards').innerHTML = cards;
+
+        // کادر حمایتی برای سطح‌های شدید یا پاسخ بالا به سؤال ۲۱ (بی‌معنا بودن زندگی)
+        const q21 = form.querySelector('input[name="Q21"]:checked');
+        const needSupport = levels.dep >= 3 || levels.anx >= 3 || (q21 && parseInt(q21.value) >= 2);
+        document.getElementById('supportBox').classList.toggle('hidden', !needSupport);
+
         formSection.classList.add('hidden');
         resultSection.classList.remove('hidden');
         window.scrollTo(0, 0);
+
+        // پویانمایی نمودارها
+        setTimeout(() => {
+            document.querySelectorAll('[data-right]').forEach(el => el.style.right = el.dataset.right + '%');
+            document.querySelectorAll('[data-w]').forEach(el => el.style.width = el.dataset.w + '%');
+            document.querySelectorAll('[data-dash]').forEach(el => el.setAttribute('stroke-dasharray', el.dataset.dash + ' 214'));
+        }, 80);
     }
 </script>
 
