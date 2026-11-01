@@ -2,1174 +2,1501 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101827">
-  <title>رزرو جلسه مشاوره</title>
-
-  <style>
-    :root {
-      --bg: #101827;
-      --panel: #182438;
-      --panel2: #202f46;
-      --text: #f4f6fb;
-      --muted: #aab6c9;
-      --gold: #e7bd72;
-      --gold2: #f4d99e;
-      --border: rgba(255,255,255,.12);
-      --danger: #ff7777;
-      --success: #70d6a0;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 24px 14px 50px;
-      background:
-        radial-gradient(circle at top right, #253753 0, transparent 38%),
-        linear-gradient(145deg, #101827, #0b1220);
-      color: var(--text);
-      font-family: Tahoma, Arial, sans-serif;
-      line-height: 1.9;
-    }
-
-    button, input, select, textarea {
-      font: inherit;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    .header {
-      text-align: center;
-      margin: 12px 0 26px;
-    }
-
-    .header .eyebrow {
-      color: var(--gold);
-      font-size: 13px;
-      letter-spacing: 1px;
-    }
-
-    h1 {
-      margin: 8px 0;
-      font-size: clamp(24px, 5vw, 34px);
-      color: var(--gold2);
-    }
-
-    .header p {
-      color: var(--muted);
-      margin: 0;
-      font-size: 14px;
-    }
-
-    .card {
-      background: rgba(24,36,56,.96);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 24px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.28);
-    }
-
-    .progress {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 26px;
-    }
-
-    .progress-item {
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .progress-item .line {
-      height: 5px;
-      border-radius: 10px;
-      background: #344258;
-      margin-bottom: 8px;
-    }
-
-    .progress-item.active .line,
-    .progress-item.done .line {
-      background: var(--gold);
-    }
-
-    .progress-item.active {
-      color: var(--gold2);
-    }
-
-    .step {
-      display: none;
-    }
-
-    .step.active {
-      display: block;
-      animation: appear .25s ease;
-    }
-
-    @keyframes appear {
-      from { opacity: 0; transform: translateY(7px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    h2 {
-      color: var(--gold2);
-      font-size: 20px;
-      margin: 0 0 7px;
-    }
-
-    .description {
-      color: var(--muted);
-      font-size: 13px;
-      margin: 0 0 22px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    .field {
-      margin-bottom: 16px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 7px;
-      font-size: 13px;
-      color: #e3e9f3;
-    }
-
-    .required {
-      color: var(--gold);
-    }
-
-    input, select, textarea {
-      width: 100%;
-      color: var(--text);
-      background: #101b2c;
-      border: 1px solid #3a4960;
-      border-radius: 11px;
-      padding: 12px 13px;
-      outline: none;
-      transition: .2s;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(231,189,114,.10);
-    }
-
-    input::placeholder, textarea::placeholder {
-      color: #8290a5;
-    }
-
-    select option {
-      background: #182438;
-      color: white;
-    }
-
-    textarea {
-      min-height: 95px;
-      resize: vertical;
-    }
-
-    .hint {
-      color: var(--muted);
-      font-size: 11px;
-      margin-top: 5px;
-    }
-
-    .choice-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin: 16px 0;
-    }
-
-    .choice {
-      border: 1px solid var(--border);
-      background: #101b2c;
-      border-radius: 12px;
-      padding: 13px;
-      cursor: pointer;
-      text-align: center;
-      color: var(--text);
-      transition: .2s;
-    }
-
-    .choice.selected {
-      border-color: var(--gold);
-      background: rgba(231,189,114,.12);
-      color: var(--gold2);
-    }
-
-    .choice input {
-      display: none;
-    }
-
-    .date-list {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      margin: 15px 0 22px;
-    }
-
-    .date-btn, .time-btn {
-      border: 1px solid var(--border);
-      background: #101b2c;
-      color: var(--text);
-      border-radius: 11px;
-      padding: 10px 5px;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .date-btn small {
-      display: block;
-      font-size: 10px;
-      color: var(--muted);
-    }
-
-    .date-btn.selected, .time-btn.selected {
-      background: rgba(231,189,114,.15);
-      border-color: var(--gold);
-      color: var(--gold2);
-    }
-
-    .date-btn:disabled, .time-btn:disabled {
-      opacity: .28;
-      cursor: not-allowed;
-      text-decoration: line-through;
-    }
-
-    .time-list {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 9px;
-      margin: 12px 0 20px;
-    }
-
-    .time-btn {
-      padding: 11px 5px;
-    }
-
-    .section-label {
-      color: var(--gold2);
-      font-size: 14px;
-      margin: 18px 0 7px;
-    }
-
-    .session-counter {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: #101b2c;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 15px;
-      margin: 16px 0;
-    }
-
-    .counter-controls {
-      display: flex;
-      align-items: center;
-      gap: 13px;
-    }
-
-    .counter-controls button {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      border: 1px solid var(--gold);
-      background: transparent;
-      color: var(--gold2);
-      font-size: 21px;
-      cursor: pointer;
-    }
-
-    .counter-controls span {
-      min-width: 22px;
-      text-align: center;
-      font-size: 19px;
-    }
-
-    .price-box {
-      background: rgba(231,189,114,.09);
-      border: 1px solid rgba(231,189,114,.3);
-      padding: 16px;
-      border-radius: 14px;
-      margin: 17px 0;
-    }
-
-    .price-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 13px;
-      margin: 5px 0;
-    }
-
-    .price-total {
-      color: var(--gold2);
-      font-size: 20px;
-      font-weight: bold;
-      border-top: 1px solid var(--border);
-      margin-top: 12px;
-      padding-top: 12px;
-    }
-
-    .bank-card {
-      background: #101b2c;
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      padding: 14px;
-      margin: 10px 0;
-    }
-
-    .bank-title {
-      color: var(--gold2);
-      font-size: 13px;
-    }
-
-    .card-number {
-      direction: ltr;
-      text-align: center;
-      letter-spacing: 1px;
-      font-size: 17px;
-      margin: 8px 0;
-      font-weight: bold;
-    }
-
-    .account-name {
-      color: var(--muted);
-      font-size: 12px;
-      text-align: center;
-    }
-
-    .copy-btn {
-      display: block;
-      margin: 8px auto 0;
-      border: 1px solid var(--gold);
-      background: transparent;
-      color: var(--gold2);
-      border-radius: 8px;
-      padding: 5px 13px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .summary {
-      background: #101b2c;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 15px;
-      margin: 16px 0;
-    }
-
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 7px 0;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      font-size: 13px;
-    }
-
-    .summary-row:last-child {
-      border: 0;
-    }
-
-    .summary-row span:first-child {
-      color: var(--muted);
-    }
-
-    .summary-row span:last-child {
-      text-align: left;
-      overflow-wrap: anywhere;
-    }
-
-    .consent {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 12px;
-      margin: 15px 0;
-    }
-
-    .consent input {
-      width: auto;
-      margin-top: 6px;
-      accent-color: var(--gold);
-    }
-
-    .actions {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      margin-top: 25px;
-    }
-
-    .btn {
-      border: 0;
-      border-radius: 11px;
-      padding: 12px 22px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: .2s;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--gold2), var(--gold));
-      color: #182438;
-      flex: 1;
-    }
-
-    .btn-secondary {
-      background: #2a3950;
-      color: var(--text);
-    }
-
-    .btn:disabled {
-      opacity: .55;
-      cursor: wait;
-    }
-
-    .notice {
-      display: none;
-      padding: 13px 15px;
-      border-radius: 11px;
-      margin: 15px 0;
-      font-size: 13px;
-    }
-
-    .notice.error {
-      display: block;
-      background: rgba(255,119,119,.1);
-      color: #ffaaaa;
-      border: 1px solid rgba(255,119,119,.3);
-    }
-
-    .notice.success {
-      display: block;
-      background: rgba(112,214,160,.1);
-      color: #a1edc1;
-      border: 1px solid rgba(112,214,160,.3);
-    }
-
-    .notice.info {
-      display: block;
-      background: rgba(231,189,114,.1);
-      color: var(--gold2);
-      border: 1px solid rgba(231,189,114,.3);
-    }
-
-    .contact {
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 23px;
-    }
-
-    .contact a {
-      color: var(--gold2);
-      text-decoration: none;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .bot-field {
-      position: absolute;
-      right: -9999px;
-      opacity: 0;
-    }
-
-    @media(max-width:560px) {
-      body { padding: 14px 9px 35px; }
-      .card { padding: 17px 13px; }
-      .grid { grid-template-columns: 1fr; gap: 0; }
-      .date-list { grid-template-columns: repeat(3, 1fr); }
-      .time-list { grid-template-columns: repeat(3, 1fr); }
-      .choice-grid { grid-template-columns: 1fr 1fr; }
-      .progress-item { font-size: 10px; }
-      .card-number { font-size: 15px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f8f5ef">
+<title>رزرو جلسه مشاوره</title>
+
+<style>
+:root {
+  --bg: #f7f5f0;
+  --card: #ffffff;
+  --soft: #fbf8f1;
+  --soft2: #f3eee3;
+  --text: #303a45;
+  --muted: #78818b;
+  --gold: #b88b45;
+  --gold-dark: #987039;
+  --gold-light: #f5ead4;
+  --border: #e9e2d5;
+  --green: #27865c;
+  --green-bg: #eaf6ef;
+  --red: #c34e4e;
+  --red-bg: #fff0ed;
+  --shadow: 0 12px 40px rgba(68, 55, 32, .08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 25px 14px 50px;
+  background:
+    radial-gradient(circle at top right, #f1e7d5 0, transparent 40%),
+    linear-gradient(145deg, #fbfaf7, #f4f0e7);
+  color: var(--text);
+  font-family: Tahoma, Arial, sans-serif;
+  line-height: 1.9;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+.container {
+  width: 100%;
+  max-width: 780px;
+  margin: auto;
+}
+
+.header {
+  text-align: center;
+  margin: 12px 0 26px;
+}
+
+.eyebrow {
+  color: var(--gold-dark);
+  font-size: 13px;
+}
+
+h1 {
+  margin: 8px 0;
+  font-size: clamp(24px, 5vw, 34px);
+  color: #755b35;
+}
+
+.header p {
+  color: var(--muted);
+  margin: 0;
+  font-size: 14px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 25px;
+  box-shadow: var(--shadow);
+}
+
+.progress {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+  margin-bottom: 28px;
+}
+
+.progress-item {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.progress-item .line {
+  height: 5px;
+  border-radius: 10px;
+  background: #e9e6df;
+  margin-bottom: 8px;
+}
+
+.progress-item.active .line,
+.progress-item.done .line {
+  background: var(--gold);
+}
+
+.progress-item.active {
+  color: var(--gold-dark);
+  font-weight: bold;
+}
+
+.step {
+  display: none;
+}
+
+.step.active {
+  display: block;
+  animation: appear .25s ease;
+}
+
+@keyframes appear {
+  from {opacity: 0; transform: translateY(7px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+h2 {
+  color: #755b35;
+  font-size: 20px;
+  margin: 0 0 7px;
+}
+
+.description {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 22px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field.full {
+  grid-column: 1 / -1;
+}
+
+label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 13px;
+  color: #47515c;
+}
+
+.required {
+  color: var(--gold-dark);
+}
+
+input, select, textarea {
+  width: 100%;
+  color: var(--text);
+  background: #fffefa;
+  border: 1px solid #ded8cc;
+  border-radius: 11px;
+  padding: 12px 13px;
+  outline: none;
+  transition: .2s;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(184,139,69,.12);
+}
+
+input::placeholder, textarea::placeholder {
+  color: #a5a7a7;
+}
+
+select option {
+  background: white;
+  color: var(--text);
+}
+
+textarea {
+  min-height: 95px;
+  resize: vertical;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 5px;
+}
+
+.date-list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 15px 0 22px;
+}
+
+.date-btn, .time-btn {
+  border: 1px solid var(--border);
+  background: #fffefa;
+  color: var(--text);
+  border-radius: 11px;
+  padding: 10px 5px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.date-btn small {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.date-btn.selected, .time-btn.selected {
+  background: var(--gold-light);
+  border-color: var(--gold);
+  color: #795a2d;
+  font-weight: bold;
+}
+
+.date-btn:disabled, .time-btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.time-list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 9px;
+  margin: 12px 0 20px;
+}
+
+.time-btn {
+  padding: 11px 5px;
+}
+
+.section-label {
+  color: #755b35;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 18px 0 7px;
+}
+
+.session-counter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--soft);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 15px;
+  margin: 16px 0;
+}
+
+.counter-controls {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.counter-controls button {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--gold);
+  background: white;
+  color: var(--gold-dark);
+  font-size: 21px;
+  cursor: pointer;
+}
+
+.counter-controls button:disabled {
+  opacity: .4;
+}
+
+.counter-controls span {
+  min-width: 22px;
+  text-align: center;
+  font-size: 19px;
+}
+
+.price-box {
+  background: #fcf8ef;
+  border: 1px solid #eadcc1;
+  padding: 16px;
+  border-radius: 14px;
+  margin: 17px 0;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  margin: 5px 0;
+}
+
+.price-total {
+  color: #795a2d;
+  font-size: 20px;
+  font-weight: bold;
+  border-top: 1px solid #eadcc1;
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
+.bank-card {
+  background: #fffefa;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 15px;
+  margin: 11px 0;
+}
+
+.bank-title {
+  color: var(--gold-dark);
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.card-number {
+  direction: ltr;
+  text-align: center;
+  letter-spacing: 1px;
+  font-size: 17px;
+  margin: 8px 0;
+  font-weight: bold;
+  color: #35404b;
+}
+
+.account-name {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.copy-btn {
+  display: block;
+  margin: 9px auto 0;
+  border: 1px solid var(--gold);
+  background: white;
+  color: var(--gold-dark);
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.payment-confirm {
+  background: #f4faf5;
+  border: 1px solid #cfe7d5;
+  border-radius: 15px;
+  padding: 17px;
+  margin-top: 22px;
+}
+
+.payment-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  cursor: pointer;
+  color: #286b49;
+  font-weight: bold;
+}
+
+.payment-check input {
+  width: 19px;
+  height: 19px;
+  margin-top: 6px;
+  accent-color: var(--green);
+}
+
+.payment-details {
+  margin-top: 17px;
+  padding-top: 14px;
+  border-top: 1px solid #d9e9dd;
+}
+
+.receipt-preview {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-top: 12px;
+}
+
+.payment-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.whatsapp-btn {
+  background: #e8f6ed;
+  color: #197345;
+  border: 1px solid #b8dfc5;
+}
+
+.sms-btn {
+  background: #edf3fc;
+  color: #315b91;
+  border: 1px solid #c9d9ed;
+}
+
+.action-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 11px;
+  padding: 12px 9px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.action-button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.summary {
+  background: var(--soft);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 15px;
+  margin: 16px 0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid #ece7dd;
+  font-size: 13px;
+}
+
+.summary-row:last-child {
+  border: 0;
+}
+
+.summary-row span:first-child {
+  color: var(--muted);
+}
+
+.summary-row span:last-child {
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  margin: 15px 0;
+}
+
+.consent input {
+  width: auto;
+  margin-top: 6px;
+  accent-color: var(--gold);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.btn {
+  border: 0;
+  border-radius: 11px;
+  padding: 12px 22px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: .2s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #cba66b, #ae8241);
+  color: white;
+  flex: 1;
+}
+
+.btn-secondary {
+  background: #eee9df;
+  color: #655943;
+}
+
+.btn:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+.notice {
+  display: none;
+  padding: 13px 15px;
+  border-radius: 11px;
+  margin: 15px 0;
+  font-size: 13px;
+}
+
+.notice.error {
+  display: block;
+  background: var(--red-bg);
+  color: var(--red);
+  border: 1px solid #f2d0c9;
+}
+
+.notice.success {
+  display: block;
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1px solid #cce8d5;
+}
+
+.notice.info {
+  display: block;
+  background: #fcf7eb;
+  color: #876b3e;
+  border: 1px solid #eadfc7;
+}
+
+.contact {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 23px;
+}
+
+.contact a {
+  color: var(--gold-dark);
+  text-decoration: none;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.bot-field {
+  position: absolute;
+  right: -9999px;
+  opacity: 0;
+}
+
+@media(max-width:560px) {
+  body {padding: 14px 9px 35px;}
+  .card {padding: 17px 13px;}
+  .grid {grid-template-columns: 1fr; gap: 0;}
+  .date-list {grid-template-columns: repeat(3, 1fr);}
+  .time-list {grid-template-columns: repeat(3, 1fr);}
+  .progress-item {font-size: 10px;}
+  .card-number {font-size: 15px;}
+  .payment-actions {grid-template-columns: 1fr;}
+}
+</style>
 </head>
 
 <body>
-  <main class="container">
-    <header class="header">
-      <div class="eyebrow">رزرو آنلاین</div>
-      <h1>درخواست جلسه مشاوره</h1>
-      <p>لطفاً مراحل زیر را با دقت تکمیل کنید.</p>
-    </header>
+<main class="container">
 
-    <section class="card">
-      <div class="progress" id="progress">
-        <div class="progress-item active"><div class="line"></div>اطلاعات شما</div>
-        <div class="progress-item"><div class="line"></div>زمان جلسه</div>
-        <div class="progress-item"><div class="line"></div>تعداد و هزینه</div>
-        <div class="progress-item"><div class="line"></div>تأیید نهایی</div>
-      </div>
+<header class="header">
+  <div class="eyebrow">رزرو آنلاین</div>
+  <h1>درخواست جلسه مشاوره</h1>
+  <p>لطفاً مراحل زیر را با دقت تکمیل کنید.</p>
+</header>
 
-      <form id="bookingForm" novalidate>
-        <!-- مرحله اول -->
-        <section class="step active" data-step="1">
-          <h2>۱. اطلاعات مراجعه‌کننده</h2>
-          <p class="description">اطلاعات تماس خود را وارد کنید تا امکان هماهنگی جلسه وجود داشته باشد.</p>
+<section class="card">
 
-          <div class="grid">
-            <div class="field">
-              <label for="name">نام و نام خانوادگی <span class="required">*</span></label>
-              <input id="name" name="name" type="text" required maxlength="100" placeholder="نام شما">
-            </div>
+<div class="progress">
+  <div class="progress-item active"><div class="line"></div>اطلاعات شما</div>
+  <div class="progress-item"><div class="line"></div>زمان جلسه</div>
+  <div class="progress-item"><div class="line"></div>تعداد و هزینه</div>
+  <div class="progress-item"><div class="line"></div>تأیید نهایی</div>
+</div>
 
-            <div class="field">
-              <label for="residence">محل سکونت <span class="required">*</span></label>
-              <select id="residence" name="residence" required>
-                <option value="">انتخاب کنید</option>
-                <option value="iran">داخل ایران</option>
-                <option value="abroad">خارج از ایران</option>
-              </select>
-            </div>
+<form id="bookingForm" novalidate>
 
-            <div class="field" id="phoneField">
-              <label for="phone">شماره موبایل <span class="required">*</span></label>
-              <input id="phone" name="phone" type="tel" required placeholder="مثلاً 09123456789" maxlength="25">
-              <div class="hint" id="phoneHint">شماره موبایل را بدون فاصله وارد کنید.</div>
-            </div>
+<!-- مرحله اول -->
+<section class="step active" data-step="1">
 
-            <div class="field hidden" id="countryField">
-              <label for="country">کشور محل سکونت <span class="required">*</span></label>
-              <input id="country" name="country" type="text" placeholder="نام کشور">
-            </div>
+<h2>۱. اطلاعات مراجعه‌کننده</h2>
+<p class="description">اطلاعات تماس خود را وارد کنید تا امکان هماهنگی جلسه وجود داشته باشد.</p>
 
-            <div class="field">
-              <label for="contactMethod">روش ارتباطی ترجیحی <span class="required">*</span></label>
-              <select id="contactMethod" name="contactMethod" required>
-                <option value="">انتخاب کنید</option>
-                <option value="whatsapp">واتساپ</option>
-                <option value="telegram">تلگرام</option>
-                <option value="phone">تماس تلفنی</option>
-                <option value="google-meet">Google Meet</option>
-                <option value="other">سایر</option>
-              </select>
-            </div>
+<div class="grid">
 
-            <div class="field">
-              <label for="platformId">شناسه یا شماره در پلتفرم ارتباطی</label>
-              <input id="platformId" name="platformId" type="text" maxlength="100" placeholder="در صورت نیاز">
-            </div>
+<div class="field">
+<label for="name">نام و نام خانوادگی <span class="required">*</span></label>
+<input id="name" type="text" required maxlength="100" placeholder="نام شما">
+</div>
 
-            <div class="field full">
-              <label for="email">آدرس ایمیل</label>
-              <input id="email" name="email" type="email" placeholder="example@email.com">
-            </div>
+<div class="field">
+<label for="residence">محل سکونت <span class="required">*</span></label>
+<select id="residence" required>
+<option value="">انتخاب کنید</option>
+<option value="iran">داخل ایران</option>
+<option value="abroad">خارج از ایران</option>
+</select>
+</div>
 
-            <div class="field full">
-              <label for="notes">توضیحات یا موضوع موردنظر</label>
-              <textarea id="notes" name="notes" maxlength="3000" placeholder="اگر توضیحی درباره درخواست مشاوره دارید، اینجا بنویسید..."></textarea>
-            </div>
-          </div>
+<div class="field">
+<label for="phone">شماره موبایل <span class="required">*</span></label>
+<input id="phone" type="tel" required maxlength="25" placeholder="مثلاً 09123456789">
+<div class="hint" id="phoneHint">شماره موبایل را بدون فاصله وارد کنید.</div>
+</div>
 
-          <div class="bot-field" aria-hidden="true">
-            <label for="website">وب‌سایت</label>
-            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
-          </div>
+<div class="field hidden" id="countryField">
+<label for="country">کشور محل سکونت <span class="required">*</span></label>
+<input id="country" type="text" placeholder="نام کشور">
+</div>
 
-          <label class="consent">
-            <input type="checkbox" id="levelsConsent">
-            <span>در صورت وجود نتایج پرسشنامه در این مرورگر، اجازه می‌دهم اطلاعات سطوح پرسشنامه همراه درخواست من ارسال شود.</span>
-          </label>
-        </section>
+<div class="field">
+<label for="contactMethod">روش ارتباطی ترجیحی <span class="required">*</span></label>
+<select id="contactMethod" required>
+<option value="">انتخاب کنید</option>
+<option value="whatsapp">واتساپ</option>
+<option value="telegram">تلگرام</option>
+<option value="phone">تماس تلفنی</option>
+<option value="google-meet">Google Meet</option>
+<option value="other">سایر</option>
+</select>
+</div>
 
-        <!-- مرحله دوم -->
-        <section class="step" data-step="2">
-          <h2>۲. انتخاب تاریخ و ساعت</h2>
-          <p class="description">یکی از روزها و ساعت‌های آزاد را انتخاب کنید. زمان‌ها بر اساس ساعت تهران هستند.</p>
+<div class="field">
+<label for="platformId">شناسه یا شماره در پلتفرم ارتباطی</label>
+<input id="platformId" type="text" maxlength="100" placeholder="در صورت نیاز">
+</div>
 
-          <div class="section-label">انتخاب روز</div>
-          <div class="date-list" id="dateList"></div>
+<div class="field full">
+<label for="email">آدرس ایمیل</label>
+<input id="email" type="email" placeholder="example@email.com">
+</div>
 
-          <div class="section-label">انتخاب ساعت شروع جلسه</div>
-          <div class="time-list" id="timeList"></div>
+<div class="field full">
+<label for="notes">توضیحات یا موضوع موردنظر</label>
+<textarea id="notes" maxlength="3000" placeholder="اگر توضیحی درباره درخواست مشاوره دارید، اینجا بنویسید..."></textarea>
+</div>
 
-          <div class="hint">هر نوبت یک ساعت در نظر گرفته شده است. ساعت‌های رزروشده قابل انتخاب نیستند.</div>
-          <div id="slotStatus" class="hint" style="margin-top:10px"></div>
-        </section>
+</div>
 
-        <!-- مرحله سوم -->
-        <section class="step" data-step="3">
-          <h2>۳. تعداد جلسات و هزینه</h2>
-          <p class="description">تعداد جلسات موردنظر خود را انتخاب کنید.</p>
+<div class="bot-field" aria-hidden="true">
+<label for="website">وب‌سایت</label>
+<input id="website" type="text" tabindex="-1" autocomplete="off">
+</div>
 
-          <div class="session-counter">
-            <div>
-              <strong>تعداد جلسات</strong>
-              <div class="hint">حداقل ۱ و حداکثر ۸ جلسه</div>
-            </div>
-            <div class="counter-controls">
-              <button type="button" id="minusBtn" aria-label="کاهش تعداد">−</button>
-              <span id="sessionCount">1</span>
-              <button type="button" id="plusBtn" aria-label="افزایش تعداد">+</button>
-            </div>
-          </div>
+<label class="consent">
+<input type="checkbox" id="levelsConsent">
+<span>در صورت وجود نتایج پرسشنامه در این مرورگر، اجازه می‌دهم اطلاعات سطوح پرسشنامه همراه درخواست من ارسال شود.</span>
+</label>
 
-          <div class="price-box">
-            <div class="price-row">
-              <span>هزینه هر جلسه</span>
-              <strong>۱,۵۰۰,۰۰۰ تومان</strong>
-            </div>
-            <div class="price-row">
-              <span>تعداد جلسات</span>
-              <strong id="priceSessions">۱</strong>
-            </div>
-            <div class="price-row price-total">
-              <span>مبلغ کل</span>
-              <strong id="totalPrice">۱,۵۰۰,۰۰۰ تومان</strong>
-            </div>
-          </div>
+</section>
 
-          <div class="section-label">اطلاعات پرداخت</div>
-          <p class="description">در صورت هماهنگی برای پرداخت، از اطلاعات زیر استفاده کنید.</p>
+<!-- مرحله دوم -->
+<section class="step" data-step="2">
 
-          <div class="bank-card">
-            <div class="bank-title">بانک صادرات</div>
-            <div class="card-number">6037 6975 6993 6765</div>
-            <div class="account-name">به نام رضا بیرانوند</div>
-            <button class="copy-btn" type="button" data-copy="6037697569936765">کپی شماره کارت</button>
-          </div>
+<h2>۲. انتخاب تاریخ و ساعت</h2>
+<p class="description">یکی از روزها و ساعت‌های آزاد را انتخاب کنید. زمان‌ها بر اساس ساعت تهران هستند.</p>
 
-          <div class="bank-card">
-            <div class="bank-title">بانک ملت</div>
-            <div class="card-number">6104 3378 2220 8466</div>
-            <div class="account-name">به نام رضا بیرانوند</div>
-            <button class="copy-btn" type="button" data-copy="6104337822208466">کپی شماره کارت</button>
-          </div>
+<div class="section-label">انتخاب روز</div>
+<div class="date-list" id="dateList"></div>
 
-          <div class="hint">لطفاً پرداخت را مطابق هماهنگی انجام دهید و در صورت نیاز رسید پرداخت را برای مدیر ارسال کنید.</div>
-        </section>
+<div class="section-label">انتخاب ساعت شروع جلسه</div>
+<div class="time-list" id="timeList"></div>
 
-        <!-- مرحله چهارم -->
-        <section class="step" data-step="4">
-          <h2>۴. مرور و ثبت درخواست</h2>
-          <p class="description">اطلاعات زیر را بررسی کنید. پس از ثبت درخواست، برای هماهنگی نهایی با شما تماس گرفته می‌شود.</p>
+<div class="hint">هر نوبت یک ساعت در نظر گرفته شده است. ساعت‌های رزروشده قابل انتخاب نیستند.</div>
+<div id="slotStatus" class="hint" style="margin-top:10px"></div>
 
-          <div class="summary" id="summary"></div>
+</section>
 
-          <div class="notice info">
-            ثبت این فرم به معنی ارسال درخواست رزرو است. قطعی شدن زمان پس از بررسی و تأیید هماهنگی انجام می‌شود.
-          </div>
-        </section>
+<!-- مرحله سوم -->
+<section class="step" data-step="3">
 
-        <div id="message" class="notice" role="status" aria-live="polite"></div>
+<h2>۳. تعداد جلسات و هزینه</h2>
+<p class="description">تعداد جلسات موردنظر خود را انتخاب کنید.</p>
 
-        <div class="actions">
-          <button type="button" class="btn btn-secondary hidden" id="backBtn">مرحله قبل</button>
-          <button type="button" class="btn btn-primary" id="nextBtn">ادامه</button>
-          <button type="submit" class="btn btn-primary hidden" id="submitBtn">ثبت درخواست رزرو</button>
-        </div>
-      </form>
-    </section>
+<div class="session-counter">
+  <div>
+    <strong>تعداد جلسات</strong>
+    <div class="hint">حداقل ۱ و حداکثر ۸ جلسه</div>
+  </div>
+  <div class="counter-controls">
+    <button type="button" id="minusBtn">−</button>
+    <span id="sessionCount">1</span>
+    <button type="button" id="plusBtn">+</button>
+  </div>
+</div>
 
-    <div class="contact">
-      برای هماهنگی و پرسش بیشتر:
-      <br>
-      <a href="tel:09129315637">۰۹۱۲۹۳۱۵۶۳۷</a>
-      &nbsp; | &nbsp;
-      <a href="https://wa.me/989129315637" target="_blank" rel="noopener">ارتباط در واتساپ</a>
-    </div>
-  </main>
+<div class="price-box">
+  <div class="price-row">
+    <span>هزینه هر جلسه</span>
+    <strong>۱,۵۰۰,۰۰۰ تومان</strong>
+  </div>
+  <div class="price-row">
+    <span>تعداد جلسات</span>
+    <strong id="priceSessions">۱</strong>
+  </div>
+  <div class="price-row price-total">
+    <span>مبلغ کل</span>
+    <strong id="totalPrice">۱,۵۰۰,۰۰۰ تومان</strong>
+  </div>
+</div>
 
-  <script>
-    // آدرس Web App شما
-    const bookingURL = 'https://script.google.com/macros/s/AKfycby9G_mJYUh5Ei9qLW4khOKPu5LRE_L6f8jZRn-J0pnVk15xBnxk21R1OVAADteOyO4M/exec';
+<div class="section-label">اطلاعات پرداخت</div>
+<p class="description">لطفاً پس از هماهنگی، مبلغ را به یکی از کارت‌های زیر واریز کنید.</p>
 
-    const TIME_ZONE = 'Asia/Tehran';
-    const SESSION_PRICE = 1500000;
-    const MAX_SESSIONS = 8;
-    const ALLOWED_HOURS = [10, 11, 13, 14, 15, 16, 17, 19, 20, 21];
+<div class="bank-card">
+  <div class="bank-title">بانک صادرات</div>
+  <div class="card-number">6037 6975 6993 6765</div>
+  <div class="account-name">به نام رضا بیرانوند</div>
+  <button class="copy-btn" type="button" data-copy="6037697569936765">کپی شماره کارت</button>
+</div>
 
-    let currentStep = 1;
-    let selectedDate = null;
-    let selectedHour = null;
-    let sessions = 1;
-    let bookedSlots = [];
-    let dates = [];
-    let submitting = false;
+<div class="bank-card">
+  <div class="bank-title">بانک ملت</div>
+  <div class="card-number">6104 3378 2220 8466</div>
+  <div class="account-name">به نام رضا بیرانوند</div>
+  <button class="copy-btn" type="button" data-copy="6104337822208466">کپی شماره کارت</button>
+</div>
 
-    const $ = id => document.getElementById(id);
+<!-- تأیید کارت به کارت -->
+<div class="payment-confirm">
 
-    function tehranParts(date = new Date()) {
-      const parts = new Intl.DateTimeFormat('en-CA', {
-        timeZone: TIME_ZONE,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        hourCycle: 'h23'
-      }).formatToParts(date);
+<label class="payment-check">
+  <input type="checkbox" id="paymentDone">
+  <span>کارت‌به‌کارت را انجام دادم</span>
+</label>
 
-      const result = {};
-      parts.forEach(p => result[p.type] = p.value);
-      return result;
-    }
+<div class="hint">با فعال کردن این گزینه، می‌توانید زمان تراکنش و تصویر رسید پرداخت را ثبت و برای هماهنگی ارسال کنید.</div>
 
-    function dateISO(date) {
-      const p = tehranParts(date);
-      return `${p.year}-${p.month}-${p.day}`;
-    }
+<div id="paymentDetails" class="payment-details hidden">
 
-    function dateLabel(iso) {
-      const [y, m, d] = iso.split('-').map(Number);
-      const date = new Date(Date.UTC(y, m - 1, d, 12));
-      return new Intl.DateTimeFormat('fa-IR', {
-        timeZone: 'UTC',
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long'
-      }).format(date);
-    }
+  <div class="field">
+    <label for="paymentBank">بانکی که به آن واریز کرده‌اید</label>
+    <select id="paymentBank">
+      <option value="">انتخاب بانک</option>
+      <option value="صادرات">بانک صادرات</option>
+      <option value="ملت">بانک ملت</option>
+      <option value="سایر">سایر</option>
+    </select>
+  </div>
 
-    function makeDates() {
-      dates = [];
-      const now = new Date();
+  <div class="field">
+    <label for="transactionDateTime">تاریخ و ساعت دقیق تراکنش <span class="required">*</span></label>
+    <input id="transactionDateTime" type="datetime-local">
+    <div class="hint">تاریخ و ساعت درج‌شده در رسید بانکی را وارد کنید.</div>
+  </div>
 
-      for (let i = 0; i < 5; i++) {
-        dates.push(dateISO(new Date(now.getTime() + i * 86400000)));
-      }
+  <div class="field">
+    <label for="receipt">تصویر رسید پرداخت</label>
+    <input id="receipt" type="file" accept="image/*">
+    <div class="hint">فرمت تصویر: JPG، PNG یا WEBP. تصویر رسید فقط برای اشتراک‌گذاری در واتساپ انتخاب می‌شود و در شیت ذخیره نخواهد شد.</div>
+    <img id="receiptPreview" class="receipt-preview hidden" alt="پیش‌نمایش رسید پرداخت">
+  </div>
 
+  <div class="payment-actions">
+    <button type="button" class="action-button whatsapp-btn" id="whatsappReceipt">
+      ارسال رسید از طریق واتساپ
+    </button>
+
+    <button type="button" class="action-button sms-btn" id="smsTransaction">
+      ارسال تاریخ و ساعت با پیامک
+    </button>
+  </div>
+
+  <div class="hint">
+    واتساپ یا برنامه پیامک پس از کلیک باز می‌شود. ارسال نهایی باید توسط خودتان تأیید شود.
+  </div>
+
+</div>
+</div>
+
+</section>
+
+<!-- مرحله چهارم -->
+<section class="step" data-step="4">
+
+<h2>۴. مرور و ثبت درخواست</h2>
+<p class="description">اطلاعات زیر را بررسی کنید. پس از ثبت درخواست، برای هماهنگی نهایی با شما تماس گرفته می‌شود.</p>
+
+<div class="summary" id="summary"></div>
+
+<div class="notice info">
+ثبت این فرم به معنی ارسال درخواست رزرو است. قطعی شدن زمان پس از بررسی و تأیید هماهنگی انجام می‌شود.
+</div>
+
+</section>
+
+<div id="message" class="notice" role="status" aria-live="polite"></div>
+
+<div class="actions">
+  <button type="button" class="btn btn-secondary hidden" id="backBtn">مرحله قبل</button>
+  <button type="button" class="btn btn-primary" id="nextBtn">ادامه</button>
+  <button type="submit" class="btn btn-primary hidden" id="submitBtn">ثبت درخواست رزرو</button>
+</div>
+
+</form>
+</section>
+
+<div class="contact">
+برای هماهنگی و پرسش بیشتر:
+<br>
+<a href="tel:09129315637">۰۹۱۲۹۳۱۵۶۳۷</a>
+&nbsp; | &nbsp;
+<a href="https://wa.me/989129315637" target="_blank" rel="noopener">ارتباط در واتساپ</a>
+</div>
+
+</main>
+
+<script>
+// آدرس Web App شما
+const bookingURL = 'https://script.google.com/macros/s/AKfycby9G_mJYUh5Ei9qLW4khOKPu5LRE_L6f8jZRn-J0pnVk15xBnxk21R1OVAADteOyO4M/exec';
+
+const ADMIN_PHONE = '989129315637';
+const TIME_ZONE = 'Asia/Tehran';
+const SESSION_PRICE = 1500000;
+const MAX_SESSIONS = 8;
+const ALLOWED_HOURS = [10,11,13,14,15,16,17,19,20,21];
+
+let currentStep = 1;
+let selectedDate = null;
+let selectedHour = null;
+let sessions = 1;
+let bookedSlots = [];
+let dates = [];
+let submitting = false;
+let receiptFile = null;
+
+const $ = id => document.getElementById(id);
+
+function tehranParts(date = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23'
+  }).formatToParts(date);
+
+  const result = {};
+  parts.forEach(p => result[p.type] = p.value);
+  return result;
+}
+
+function dateISO(date) {
+  const p = tehranParts(date);
+  return `${p.year}-${p.month}-${p.day}`;
+}
+
+function dateLabel(iso) {
+  const [y,m,d] = iso.split('-').map(Number);
+  const date = new Date(Date.UTC(y,m-1,d,12));
+
+  return new Intl.DateTimeFormat('fa-IR', {
+    timeZone: 'UTC',
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long'
+  }).format(date);
+}
+
+function makeDates() {
+  dates = [];
+  const now = new Date();
+
+  for (let i = 0; i < 5; i++) {
+    dates.push(dateISO(new Date(now.getTime() + i * 86400000)));
+  }
+
+  renderDates();
+}
+
+function isPastTime(iso,hour) {
+  if (iso !== dateISO(new Date())) return false;
+
+  const p = tehranParts();
+  const currentMinutes = Number(p.hour) * 60 + Number(p.minute);
+  return hour * 60 - currentMinutes < 30;
+}
+
+function renderDates() {
+  const list = $('dateList');
+  list.innerHTML = '';
+
+  dates.forEach(iso => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'date-btn' + (selectedDate === iso ? ' selected' : '');
+    btn.innerHTML = `<small>${dateLabel(iso)}</small>${iso.split('-')[2]}`;
+
+    btn.addEventListener('click', () => {
+      selectedDate = iso;
+      selectedHour = null;
       renderDates();
+      renderTimes();
+    });
+
+    list.appendChild(btn);
+  });
+}
+
+function renderTimes() {
+  const list = $('timeList');
+  list.innerHTML = '';
+
+  if (!selectedDate) {
+    $('slotStatus').textContent = 'ابتدا یک روز را انتخاب کنید.';
+    return;
+  }
+
+  ALLOWED_HOURS.forEach(hour => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+
+    const key = `${selectedDate}|${hour}`;
+    const isBooked = bookedSlots.includes(key);
+    const isPast = isPastTime(selectedDate,hour);
+
+    btn.className = 'time-btn' + (selectedHour === hour ? ' selected' : '');
+    btn.textContent = `${String(hour).padStart(2,'0')}:00`;
+    btn.disabled = isBooked || isPast;
+
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+      selectedHour = hour;
+      renderTimes();
+    });
+
+    list.appendChild(btn);
+  });
+
+  $('slotStatus').textContent =
+    'زمان‌ها بر اساس اطلاعات دریافتی از سامانه رزرو نمایش داده می‌شوند.';
+}
+
+async function loadBookedSlots() {
+  $('slotStatus').textContent = 'در حال دریافت ساعت‌های رزروشده...';
+
+  try {
+    const response = await fetch(
+      bookingURL + '?action=slots&v=' + Date.now(),
+      {method:'GET',cache:'no-store'}
+    );
+
+    if (!response.ok) throw new Error('خطا در دریافت زمان‌ها');
+
+    const data = await response.json();
+
+    if (!data || !Array.isArray(data.booked)) {
+      throw new Error('پاسخ سرور معتبر نیست');
     }
 
-    function isPastTime(iso, hour) {
-      const today = dateISO(new Date());
+    bookedSlots = data.booked;
+    renderTimes();
 
-      if (iso !== today) return false;
+  } catch (error) {
+    $('slotStatus').textContent =
+      'امکان دریافت خودکار ساعت‌های رزروشده وجود ندارد. قبل از پرداخت و نهایی کردن زمان، با مدیر هماهنگ کنید.';
+    console.warn(error);
+  }
+}
 
-      const p = tehranParts();
-      const currentMinutes = Number(p.hour) * 60 + Number(p.minute);
-      const appointmentMinutes = hour * 60;
+function updateSessions() {
+  $('sessionCount').textContent = sessions;
+  $('priceSessions').textContent = sessions.toLocaleString('fa-IR');
+  $('totalPrice').textContent =
+    (sessions * SESSION_PRICE).toLocaleString('fa-IR') + ' تومان';
 
-      // حداقل ۳۰ دقیقه فاصله تا شروع جلسه
-      return appointmentMinutes - currentMinutes < 30;
+  $('minusBtn').disabled = sessions <= 1;
+  $('plusBtn').disabled = sessions >= MAX_SESSIONS;
+}
+
+function showMessage(text,type='error') {
+  const box = $('message');
+  box.textContent = text;
+  box.className = 'notice ' + type;
+}
+
+function clearMessage() {
+  $('message').textContent = '';
+  $('message').className = 'notice';
+}
+
+function showStep(step) {
+  currentStep = step;
+
+  document.querySelectorAll('.step').forEach(el => {
+    el.classList.toggle('active',Number(el.dataset.step) === step);
+  });
+
+  document.querySelectorAll('.progress-item').forEach((el,index) => {
+    el.classList.toggle('active',index + 1 === step);
+    el.classList.toggle('done',index + 1 < step);
+  });
+
+  $('backBtn').classList.toggle('hidden',step === 1);
+  $('nextBtn').classList.toggle('hidden',step === 4);
+  $('submitBtn').classList.toggle('hidden',step !== 4);
+
+  clearMessage();
+
+  if (step === 4) renderSummary();
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function validateStep1() {
+  const name = $('name').value.trim();
+  const residence = $('residence').value;
+  const phone = $('phone').value.trim();
+  const method = $('contactMethod').value;
+  const country = $('country').value.trim();
+  const email = $('email').value.trim();
+
+  if (!name || !residence || !phone || !method) {
+    showMessage('لطفاً تمام فیلدهای ضروری را تکمیل کنید.');
+    return false;
+  }
+
+  if (residence === 'iran') {
+    const normalized = phone.replace(/\s|-/g,'');
+    if (!/^09\d{9}$/.test(normalized)) {
+      showMessage('شماره موبایل ایران باید با 09 شروع شود و ۱۱ رقم باشد.');
+      return false;
+    }
+  } else {
+    if (!country) {
+      showMessage('لطفاً کشور محل سکونت خود را وارد کنید.');
+      return false;
     }
 
-    function renderDates() {
-      const list = $('dateList');
-      list.innerHTML = '';
+    if (phone.replace(/\D/g,'').length < 7) {
+      showMessage('لطفاً شماره تماس معتبر وارد کنید.');
+      return false;
+    }
+  }
 
-      dates.forEach(iso => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'date-btn' + (selectedDate === iso ? ' selected' : '');
-        btn.innerHTML = `<small>${dateLabel(iso)}</small>${iso.split('-')[2]}`;
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showMessage('لطفاً آدرس ایمیل معتبر وارد کنید.');
+    return false;
+  }
 
-        btn.addEventListener('click', () => {
-          selectedDate = iso;
-          selectedHour = null;
-          renderDates();
-          renderTimes();
+  return true;
+}
+
+function validateStep2() {
+  if (!selectedDate) {
+    showMessage('لطفاً تاریخ جلسه را انتخاب کنید.');
+    return false;
+  }
+
+  if (selectedHour === null) {
+    showMessage('لطفاً ساعت جلسه را انتخاب کنید.');
+    return false;
+  }
+
+  if (bookedSlots.includes(`${selectedDate}|${selectedHour}`)) {
+    showMessage('این ساعت قبلاً رزرو شده است. لطفاً ساعت دیگری انتخاب کنید.');
+    renderTimes();
+    return false;
+  }
+
+  if (isPastTime(selectedDate,selectedHour)) {
+    showMessage('برای امروز باید حداقل ۳۰ دقیقه تا شروع جلسه باقی مانده باشد.');
+    renderTimes();
+    return false;
+  }
+
+  return true;
+}
+
+function validatePayment() {
+  if (!$('paymentDone').checked) return true;
+
+  if (!$('transactionDateTime').value) {
+    showMessage('لطفاً تاریخ و ساعت دقیق تراکنش را وارد کنید.');
+    $('transactionDateTime').focus();
+    return false;
+  }
+
+  const transactionDate = new Date($('transactionDateTime').value);
+
+  if (isNaN(transactionDate.getTime())) {
+    showMessage('تاریخ و ساعت تراکنش معتبر نیست.');
+    return false;
+  }
+
+  if (transactionDate.getTime() > Date.now() + 5 * 60 * 1000) {
+    showMessage('زمان تراکنش نمی‌تواند در آینده باشد.');
+    return false;
+  }
+
+  return true;
+}
+
+function formatTransactionDate() {
+  const value = $('transactionDateTime').value;
+  if (!value) return 'ثبت نشده';
+
+  const date = new Date(value);
+
+  return new Intl.DateTimeFormat('fa-IR',{
+    dateStyle:'long',
+    timeStyle:'short'
+  }).format(date);
+}
+
+function renderSummary() {
+  const residenceText = $('residence').value === 'iran'
+    ? 'داخل ایران' : 'خارج از ایران';
+
+  const methodText = {
+    whatsapp:'واتساپ',
+    telegram:'تلگرام',
+    phone:'تماس تلفنی',
+    'google-meet':'Google Meet',
+    other:'سایر'
+  }[$('contactMethod').value] || $('contactMethod').value;
+
+  const rows = [
+    ['نام و نام خانوادگی',$('name').value.trim()],
+    ['محل سکونت',residenceText],
+    ['کشور',$('country').value.trim() || '—'],
+    ['شماره تماس',$('phone').value.trim()],
+    ['روش ارتباط',methodText],
+    ['شناسه پلتفرم',$('platformId').value.trim() || '—'],
+    ['ایمیل',$('email').value.trim() || '—'],
+    ['تاریخ جلسه',selectedDate ? dateLabel(selectedDate) : '—'],
+    ['ساعت جلسه',selectedHour !== null ? `${String(selectedHour).padStart(2,'0')}:00` : '—'],
+    ['تعداد جلسات',sessions.toLocaleString('fa-IR')],
+    ['مبلغ کل',(sessions * SESSION_PRICE).toLocaleString('fa-IR') + ' تومان'],
+    ['وضعیت پرداخت',$('paymentDone').checked ? 'کارت‌به‌کارت انجام شده' : 'هنوز اعلام نشده'],
+    ['بانک پرداخت',$('paymentBank').value || '—'],
+    ['تاریخ و ساعت تراکنش',$('paymentDone').checked ? formatTransactionDate() : '—'],
+    ['تصویر رسید',receiptFile ? receiptFile.name : 'انتخاب نشده']
+  ];
+
+  $('summary').innerHTML = rows.map(row =>
+    `<div class="summary-row"><span>${escapeHTML(row[0])}</span><span>${escapeHTML(row[1])}</span></div>`
+  ).join('');
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g,ch => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  })[ch]);
+}
+
+function collectData() {
+  let levels = {};
+
+  if ($('levelsConsent').checked) {
+    try {
+      const saved = sessionStorage.getItem('qLevels');
+
+      if (saved) {
+        const parsed = JSON.parse(saved);
+
+        if (parsed && typeof parsed === 'object') {
+          levels = {
+            dep: parsed.dep ?? null,
+            anx: parsed.anx ?? null,
+            hyp: parsed.hyp ?? null
+          };
+        }
+      }
+    } catch(e) {
+      console.warn('Questionnaire data could not be read:',e);
+    }
+  }
+
+  return {
+    action:'booking',
+    name:$('name').value.trim(),
+    phone:$('phone').value.trim(),
+    residence:$('residence').value,
+    country:$('country').value.trim(),
+    contactMethod:$('contactMethod').value,
+    platformId:$('platformId').value.trim(),
+    email:$('email').value.trim(),
+    notes:$('notes').value.trim(),
+
+    date:selectedDate,
+    dateLabel:selectedDate ? dateLabel(selectedDate) : '',
+    hour:selectedHour,
+    timeLabel:selectedHour !== null
+      ? `${String(selectedHour).padStart(2,'0')}:00` : '',
+
+    sessions:sessions,
+    total:sessions * SESSION_PRICE,
+    levels:levels,
+
+    paymentDone:$('paymentDone').checked,
+    paymentBank:$('paymentBank').value,
+    transactionDateTime:$('transactionDateTime').value,
+    transactionDateTimeLabel:formatTransactionDate(),
+    receiptFileName:receiptFile ? receiptFile.name : '',
+
+    website:$('website').value,
+    submittedAt:new Date().toISOString()
+  };
+}
+
+function transactionMessage() {
+  const payload = collectData();
+
+  return [
+    'سلام، پرداخت هزینه مشاوره را انجام داده‌ام.',
+    '',
+    'نام: ' + payload.name,
+    'مبلغ: ' + payload.total.toLocaleString('en-US') + ' تومان',
+    'بانک: ' + (payload.paymentBank || 'اعلام نشده'),
+    'تاریخ و ساعت تراکنش: ' + payload.transactionDateTimeLabel,
+    'تاریخ جلسه: ' + (payload.dateLabel || ''),
+    'ساعت جلسه: ' + (payload.timeLabel || ''),
+    'شماره تماس: ' + payload.phone,
+    '',
+    'تصویر رسید پرداخت را پیوست می‌کنم.'
+  ].join('\n');
+}
+
+async function sendReceiptWhatsApp() {
+  if (!validatePayment()) return;
+
+  if (!$('paymentDone').checked) {
+    showMessage('ابتدا گزینه کارت‌به‌کارت را انجام دادم فعال کنید.');
+    return;
+  }
+
+  const text = transactionMessage();
+
+  if (receiptFile) {
+    try {
+      const fileToShare = new File(
+        [receiptFile],
+        receiptFile.name,
+        {type:receiptFile.type}
+      );
+
+      if (
+        navigator.canShare &&
+        navigator.canShare({files:[fileToShare]}) &&
+        navigator.share
+      ) {
+        await navigator.share({
+          files:[fileToShare],
+          title:'رسید پرداخت مشاوره',
+          text:text
         });
-
-        list.appendChild(btn);
-      });
-    }
-
-    function renderTimes() {
-      const list = $('timeList');
-      list.innerHTML = '';
-
-      if (!selectedDate) {
-        $('slotStatus').textContent = 'ابتدا یک روز را انتخاب کنید.';
         return;
       }
-
-      ALLOWED_HOURS.forEach(hour => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-
-        const key = `${selectedDate}|${hour}`;
-        const isBooked = bookedSlots.includes(key);
-        const isPast = isPastTime(selectedDate, hour);
-
-        btn.className = 'time-btn' + (selectedHour === hour ? ' selected' : '');
-        btn.textContent = `${String(hour).padStart(2, '0')}:00`;
-        btn.disabled = isBooked || isPast;
-
-        if (isBooked) {
-          btn.title = 'این ساعت قبلاً رزرو شده است';
-        } else if (isPast) {
-          btn.title = 'زمان انتخابی گذشته یا کمتر از ۳۰ دقیقه تا شروع آن باقی مانده است';
-        }
-
-        btn.addEventListener('click', () => {
-          if (btn.disabled) return;
-          selectedHour = hour;
-          renderTimes();
-        });
-
-        list.appendChild(btn);
-      });
-
-      $('slotStatus').textContent = 'ساعت‌های نمایش‌داده‌شده بر اساس اطلاعات دریافتی از سامانه رزرو هستند.';
+    } catch(error) {
+      if (error.name === 'AbortError') return;
+      console.warn('File sharing unavailable:',error);
     }
+  }
 
-    async function loadBookedSlots() {
-      $('slotStatus').textContent = 'در حال دریافت ساعت‌های رزروشده...';
+  const url = 'https://wa.me/' + ADMIN_PHONE +
+    '?text=' + encodeURIComponent(text);
 
-      try {
-        const response = await fetch(bookingURL + '?action=slots&v=' + Date.now(), {
-          method: 'GET',
-          cache: 'no-store'
-        });
+  window.open(url,'_blank','noopener');
 
-        if (!response.ok) throw new Error('خطا در دریافت زمان‌ها');
+  if (receiptFile) {
+    showMessage(
+      'واتساپ باز شد. لطفاً تصویر رسید انتخاب‌شده را در گفت‌وگو به‌صورت دستی پیوست کنید.',
+      'info'
+    );
+  } else {
+    showMessage(
+      'واتساپ باز شد. هنوز تصویری برای رسید انتخاب نکرده‌اید.',
+      'info'
+    );
+  }
+}
 
-        const data = await response.json();
+function sendTransactionSMS() {
+  if (!validatePayment()) return;
 
-        if (data && Array.isArray(data.booked)) {
-          bookedSlots = data.booked;
-        } else {
-          throw new Error('پاسخ سرور معتبر نیست');
-        }
+  if (!$('paymentDone').checked) {
+    showMessage('ابتدا گزینه کارت‌به‌کارت را انجام دادم فعال کنید.');
+    return;
+  }
 
-        renderTimes();
-      } catch (error) {
-        $('slotStatus').textContent =
-          'امکان دریافت خودکار ساعت‌های رزروشده وجود ندارد. قبل از تأیید نهایی، زمان را با مدیر هماهنگ کنید.';
-        console.warn('Slot loading error:', error);
-      }
-    }
+  const payload = collectData();
 
-    function updateSessions() {
-      $('sessionCount').textContent = sessions;
-      $('priceSessions').textContent = sessions.toLocaleString('fa-IR');
-      $('totalPrice').textContent =
-        (sessions * SESSION_PRICE).toLocaleString('fa-IR') + ' تومان';
+  const smsText = [
+    'پرداخت مشاوره',
+    'نام: ' + payload.name,
+    'مبلغ: ' + payload.total.toLocaleString('en-US') + ' تومان',
+    'بانک: ' + (payload.paymentBank || 'اعلام نشده'),
+    'تاریخ و ساعت تراکنش: ' + payload.transactionDateTimeLabel,
+    'تاریخ جلسه: ' + payload.dateLabel,
+    'ساعت جلسه: ' + payload.timeLabel
+  ].join('\n');
 
-      $('minusBtn').disabled = sessions <= 1;
-      $('plusBtn').disabled = sessions >= MAX_SESSIONS;
-    }
+  const smsURL = 'sms:' + ADMIN_PHONE + '?body=' + encodeURIComponent(smsText);
 
-    function showMessage(text, type = 'error') {
-      const box = $('message');
-      box.textContent = text;
-      box.className = 'notice ' + type;
-    }
+  window.location.href = smsURL;
+}
 
-    function clearMessage() {
-      $('message').textContent = '';
-      $('message').className = 'notice';
-    }
+async function submitBooking(event) {
+  event.preventDefault();
 
-    function showStep(step) {
-      currentStep = step;
+  if (submitting) return;
 
-      document.querySelectorAll('.step').forEach(el => {
-        el.classList.toggle('active', Number(el.dataset.step) === step);
-      });
+  if (!validateStep1()) {
+    showStep(1);
+    return;
+  }
 
-      document.querySelectorAll('.progress-item').forEach((el, index) => {
-        el.classList.toggle('active', index + 1 === step);
-        el.classList.toggle('done', index + 1 < step);
-      });
+  if (!validateStep2()) {
+    showStep(2);
+    return;
+  }
 
-      $('backBtn').classList.toggle('hidden', step === 1);
-      $('nextBtn').classList.toggle('hidden', step === 4);
-      $('submitBtn').classList.toggle('hidden', step !== 4);
+  if (!validatePayment()) {
+    showStep(3);
+    return;
+  }
 
-      clearMessage();
+  if ($('website').value.trim()) {
+    showMessage('درخواست نامعتبر است.');
+    return;
+  }
 
-      if (step === 4) renderSummary();
+  const payload = collectData();
 
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+  submitting = true;
+  $('submitBtn').disabled = true;
+  $('submitBtn').textContent = 'در حال ارسال...';
+  clearMessage();
 
-    function validateStep1() {
-      const name = $('name').value.trim();
-      const residence = $('residence').value;
-      const phone = $('phone').value.trim();
-      const method = $('contactMethod').value;
-      const country = $('country').value.trim();
-      const email = $('email').value.trim();
-
-      if (!name || !residence || !phone || !method) {
-        showMessage('لطفاً تمام فیلدهای ضروری را تکمیل کنید.');
-        return false;
-      }
-
-      if (residence === 'iran') {
-        const normalized = phone.replace(/\s|-/g, '');
-        if (!/^09\d{9}$/.test(normalized)) {
-          showMessage('شماره موبایل ایران باید با 09 شروع شود و ۱۱ رقم باشد.');
-          return false;
-        }
-      } else {
-        if (!country) {
-          showMessage('لطفاً کشور محل سکونت خود را وارد کنید.');
-          return false;
-        }
-
-        if (phone.replace(/\D/g, '').length < 7) {
-          showMessage('لطفاً شماره تماس معتبر وارد کنید.');
-          return false;
-        }
-      }
-
-      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showMessage('لطفاً آدرس ایمیل معتبر وارد کنید.');
-        return false;
-      }
-
-      return true;
-    }
-
-    function validateStep2() {
-      if (!selectedDate) {
-        showMessage('لطفاً تاریخ جلسه را انتخاب کنید.');
-        return false;
-      }
-
-      if (selectedHour === null) {
-        showMessage('لطفاً ساعت جلسه را انتخاب کنید.');
-        return false;
-      }
-
-      if (bookedSlots.includes(`${selectedDate}|${selectedHour}`)) {
-        showMessage('این ساعت در حال حاضر رزرو شده است. لطفاً ساعت دیگری انتخاب کنید.');
-        renderTimes();
-        return false;
-      }
-
-      if (isPastTime(selectedDate, selectedHour)) {
-        showMessage('برای امروز باید حداقل ۳۰ دقیقه تا شروع جلسه باقی مانده باشد.');
-        renderTimes();
-        return false;
-      }
-
-      return true;
-    }
-
-    function renderSummary() {
-      const residenceText = $('residence').value === 'iran' ? 'داخل ایران' : 'خارج از ایران';
-      const methodText = {
-        whatsapp: 'واتساپ',
-        telegram: 'تلگرام',
-        phone: 'تماس تلفنی',
-        'google-meet': 'Google Meet',
-        other: 'سایر'
-      }[$('contactMethod').value] || $('contactMethod').value;
-
-      const rows = [
-        ['نام و نام خانوادگی', $('name').value.trim()],
-        ['محل سکونت', residenceText],
-        ['کشور', $('country').value.trim() || '—'],
-        ['شماره تماس', $('phone').value.trim()],
-        ['روش ارتباط', methodText],
-        ['شناسه پلتفرم', $('platformId').value.trim() || '—'],
-        ['ایمیل', $('email').value.trim() || '—'],
-        ['تاریخ جلسه', selectedDate ? dateLabel(selectedDate) : '—'],
-        ['ساعت جلسه', selectedHour !== null ? `${String(selectedHour).padStart(2, '0')}:00` : '—'],
-        ['تعداد جلسات', sessions.toLocaleString('fa-IR')],
-        ['مبلغ کل', (sessions * SESSION_PRICE).toLocaleString('fa-IR') + ' تومان']
-      ];
-
-      $('summary').innerHTML = rows.map(row =>
-        `<div class="summary-row"><span>${escapeHTML(row[0])}</span><span>${escapeHTML(row[1])}</span></div>`
-      ).join('');
-    }
-
-    function escapeHTML(value) {
-      return String(value).replace(/[&<>"']/g, ch => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      })[ch]);
-    }
-
-    function collectData() {
-      let levels = {};
-
-      if ($('levelsConsent').checked) {
-        try {
-          const saved = sessionStorage.getItem('qLevels');
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (parsed && typeof parsed === 'object') {
-              levels = {
-                dep: parsed.dep ?? null,
-                anx: parsed.anx ?? null,
-                hyp: parsed.hyp ?? null
-              };
-            }
-          }
-        } catch (e) {
-          console.warn('Questionnaire data could not be read:', e);
-        }
-      }
-
-      return {
-        action: 'booking',
-        name: $('name').value.trim(),
-        phone: $('phone').value.trim(),
-        residence: $('residence').value,
-        country: $('country').value.trim(),
-        contactMethod: $('contactMethod').value,
-        platformId: $('platformId').value.trim(),
-        email: $('email').value.trim(),
-        notes: $('notes').value.trim(),
-        date: selectedDate,
-        dateLabel: selectedDate ? dateLabel(selectedDate) : '',
-        hour: selectedHour,
-        timeLabel: selectedHour !== null
-          ? `${String(selectedHour).padStart(2, '0')}:00`
-          : '',
-        sessions: sessions,
-        total: sessions * SESSION_PRICE,
-        levels: levels,
-        website: $('website').value,
-        submittedAt: new Date().toISOString()
-      };
-    }
-
-    async function submitBooking(event) {
-      event.preventDefault();
-
-      if (submitting) return;
-
-      if (!validateStep1() || !validateStep2()) {
-        showStep(!validateStep1() ? 1 : 2);
-        return;
-      }
-
-      if ($('website').value.trim()) {
-        showMessage('درخواست نامعتبر است.');
-        return;
-      }
-
-      const payload = collectData();
-
-      submitting = true;
-      $('submitBtn').disabled = true;
-      $('submitBtn').textContent = 'در حال ارسال...';
-      clearMessage();
-
-      try {
-        // ارسال به Apps Script با text/plain برای جلوگیری از preflight
-        // در حالت no-cors امکان خواندن پاسخ سرور وجود ندارد.
-        await fetch(bookingURL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        $('submitBtn').classList.add('hidden');
-        $('backBtn').classList.add('hidden');
-        $('nextBtn').classList.add('hidden');
-
-        showMessage(
-          'درخواست شما ارسال شد. لطفاً برای قطعی شدن زمان جلسه منتظر تأیید و هماهنگی مدیر بمانید. ارسال درخواست به‌تنهایی به معنی تأیید نهایی رزرو نیست.',
-          'success'
-        );
-
-      } catch (error) {
-        console.error(error);
-        showMessage(
-          'ارسال درخواست با خطا مواجه شد. لطفاً اتصال اینترنت را بررسی کنید یا از طریق شماره تماس و واتساپ هماهنگ کنید.',
-          'error'
-        );
-        $('submitBtn').disabled = false;
-        $('submitBtn').textContent = 'تلاش مجدد برای ثبت درخواست';
-      } finally {
-        submitting = false;
-      }
-    }
-
-    // تغییر محل سکونت
-    $('residence').addEventListener('change', () => {
-      const abroad = $('residence').value === 'abroad';
-      $('countryField').classList.toggle('hidden', !abroad);
-      $('country').required = abroad;
-      $('phoneHint').textContent = abroad
-        ? 'شماره را همراه با کد کشور وارد کنید.'
-        : 'شماره موبایل را بدون فاصله وارد کنید.';
+  try {
+    await fetch(bookingURL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{
+        'Content-Type':'text/plain;charset=utf-8'
+      },
+      body:JSON.stringify(payload)
     });
 
-    // تغییر تعداد جلسات
-    $('minusBtn').addEventListener('click', () => {
-      if (sessions > 1) sessions--;
-      updateSessions();
-    });
+    $('submitBtn').classList.add('hidden');
+    $('backBtn').classList.add('hidden');
+    $('nextBtn').classList.add('hidden');
 
-    $('plusBtn').addEventListener('click', () => {
-      if (sessions < MAX_SESSIONS) sessions++;
-      updateSessions();
-    });
+    showMessage(
+      'درخواست شما ارسال شد. برای قطعی شدن زمان جلسه منتظر تأیید و هماهنگی مدیر بمانید. ارسال فرم به‌تنهایی به معنی تأیید نهایی رزرو نیست.',
+      'success'
+    );
 
-    // کپی شماره کارت
-    document.querySelectorAll('[data-copy]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const value = btn.dataset.copy;
+  } catch(error) {
+    console.error(error);
 
-        try {
-          await navigator.clipboard.writeText(value);
-          const oldText = btn.textContent;
-          btn.textContent = 'کپی شد';
-          setTimeout(() => btn.textContent = oldText, 1500);
-        } catch (e) {
-          showMessage('کپی خودکار انجام نشد. شماره کارت را به‌صورت دستی انتخاب کنید.', 'info');
-        }
-      });
-    });
+    showMessage(
+      'ارسال درخواست با خطا مواجه شد. لطفاً اتصال اینترنت را بررسی کنید یا از طریق واتساپ و تلفن هماهنگ کنید.',
+      'error'
+    );
 
-    // دکمه‌های مراحل
-    $('nextBtn').addEventListener('click', () => {
-      clearMessage();
+    $('submitBtn').disabled = false;
+    $('submitBtn').textContent = 'تلاش مجدد برای ثبت درخواست';
 
-      if (currentStep === 1 && !validateStep1()) return;
+  } finally {
+    submitting = false;
+  }
+}
 
-      if (currentStep === 2 && !validateStep2()) return;
+// تغییر محل سکونت
+$('residence').addEventListener('change',() => {
+  const abroad = $('residence').value === 'abroad';
 
-      if (currentStep < 4) {
-        showStep(currentStep + 1);
-      }
-    });
+  $('countryField').classList.toggle('hidden',!abroad);
+  $('country').required = abroad;
 
-    $('backBtn').addEventListener('click', () => {
-      if (currentStep > 1) showStep(currentStep - 1);
-    });
+  $('phoneHint').textContent = abroad
+    ? 'شماره را همراه با کد کشور وارد کنید.'
+    : 'شماره موبایل را بدون فاصله وارد کنید.';
+});
 
-    $('bookingForm').addEventListener('submit', submitBooking);
+// تغییر تعداد جلسات
+$('minusBtn').addEventListener('click',() => {
+  if (sessions > 1) sessions--;
+  updateSessions();
+});
 
-    // راه‌اندازی اولیه
-    makeDates();
-    updateSessions();
-    loadBookedSlots();
-  </script>
+$('plusBtn').addEventListener('click',() => {
+  if (sessions < MAX_SESSIONS) sessions++;
+  updateSessions();
+});
+
+// فعال‌سازی بخش پرداخت
+$('paymentDone').addEventListener('change',() => {
+  $('paymentDetails').classList.toggle('hidden',!$('paymentDone').checked);
+  clearMessage();
+});
+
+// انتخاب و پیش‌نمایش رسید
+$('receipt').addEventListener('change',event => {
+  const file = event.target.files[0];
+  receiptFile = null;
+
+  if (!file) {
+    $('receiptPreview').classList.add('hidden');
+    return;
+  }
+
+  if (!file.type.startsWith('image/')) {
+    showMessage('لطفاً یک فایل تصویری انتخاب کنید.');
+    event.target.value = '';
+    $('receiptPreview').classList.add('hidden');
+    return;
+  }
+
+  if (file.size > 8 * 1024 * 1024) {
+    showMessage('حجم تصویر رسید نباید بیشتر از ۸ مگابایت باشد.');
+    event.target.value = '';
+    $('receiptPreview').classList.add('hidden');
+    return;
+  }
+
+  receiptFile = file;
+
+  const reader = new FileReader();
+
+  reader.onload = e => {
+    $('receiptPreview').src = e.target.result;
+    $('receiptPreview').classList.remove('hidden');
+  };
+
+  reader.readAsDataURL(file);
+});
+
+// کپی شماره کارت
+document.querySelectorAll('[data-copy]').forEach(btn => {
+  btn.addEventListener('click',async () => {
+    try {
+      await navigator.clipboard.writeText(btn.dataset.copy);
+
+      const oldText = btn.textContent;
+      btn.textContent = 'کپی شد';
+
+      setTimeout(() => btn.textContent = oldText,1500);
+    } catch(e) {
+      showMessage('کپی خودکار انجام نشد. شماره کارت را دستی انتخاب کنید.','info');
+    }
+  });
+});
+
+// دکمه‌های پرداخت
+$('whatsappReceipt').addEventListener('click',sendReceiptWhatsApp);
+$('smsTransaction').addEventListener('click',sendTransactionSMS);
+
+// دکمه مرحله بعد
+$('nextBtn').addEventListener('click',() => {
+  clearMessage();
+
+  if (currentStep === 1 && !validateStep1()) return;
+  if (currentStep === 2 && !validateStep2()) return;
+  if (currentStep === 3 && !validatePayment()) return;
+
+  if (currentStep < 4) showStep(currentStep + 1);
+});
+
+$('backBtn').addEventListener('click',() => {
+  if (currentStep > 1) showStep(currentStep - 1);
+});
+
+$('bookingForm').addEventListener('submit',submitBooking);
+
+// راه‌اندازی اولیه
+makeDates();
+updateSessions();
+loadBookedSlots();
+
+</script>
 </body>
 </html>
