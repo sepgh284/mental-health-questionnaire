@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پرسشنامه</title>
+    <style>
+        body { font-family: Tahoma, Arial, sans-serif; background: #eef2f5; color: #333; line-height: 1.6; padding: 20px; margin: 0; }
+        .container { max-width: 800px; margin: 20px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h3 { color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 5px; margin-top: 40px; font-size: 18px; }
+        .instruction { font-size: 14px; color: #555; background: #f8f9fa; padding: 10px; border-radius: 5px; border-right: 4px solid #0056b3; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        select, input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; box-sizing: border-box; }
+        .question-block { margin-bottom: 25px; padding: 15px; background: #fafafa; border: 1px solid #eee; border-radius: 8px; }
+        .question-text { font-weight: bold; margin-bottom: 15px; font-size: 15px; }
+        .options { display: flex; flex-wrap: wrap; gap: 15px; }
+        .options label { font-weight: normal; display: inline-flex; align-items: center; cursor: pointer; margin: 0; font-size: 14px; }
+        .options input[type="radio"] { margin-left: 8px; cursor: pointer; width: 18px; height: 18px; }
+        button { display: block; width: 100%; background: #28a745; color: #fff; border: none; padding: 15px; font-size: 18px; border-radius: 5px; cursor: pointer; margin-top: 30px; font-family: inherit; font-weight: bold; transition: background 0.3s; }
+        button:hover { background: #218838; }
+        .hidden { display: none; }
+        
+        /* استایل‌های مربوط به پیام نتیجه */
+        .result-box { background: #fff; padding: 25px; border-radius: 10px; border-top: 5px solid #0056b3; margin-top: 20px; }
+        .result-item { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #ddd; }
+        .result-item:last-child { border-bottom: none; }
+        .result-title { font-weight: bold; color: #0056b3; font-size: 16px; margin-bottom: 8px; }
+        .result-text { font-size: 14px; color: #333; text-align: justify; }
+        .disclaimer { background: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; font-size: 13px; margin-top: 25px; text-align: justify; border: 1px solid #ffeeba; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- فرم اصلی -->
+    <div id="formSection">
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">با سلام، لطفاً به سوالات زیر با دقت و صداقت پاسخ دهید. اطلاعات شما محرمانه خواهد ماند.</p>
+        
+        <form id="surveyForm">
+            <!-- بخش دموگرافیک -->
+            <h3>اطلاعات شخصی</h3>
+            <div class="form-group">
+                <label for="Age">سن (به سال):</label>
+                <input type="number" id="Age" name="Age" required min="18" max="99" placeholder="مثلاً ۲۵">
+            </div>
+            <div class="form-group">
+                <label for="Gender">جنسیت:</label>
+                <select id="Gender" name="Gender" required>
+                    <option value="">انتخاب کنید...</option>
+                    <option value="زن">زن</option>
+                    <option value="مرد">مرد</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="MaritalStatus">وضعیت تأهل:</label>
+                <select id="MaritalStatus" name="MaritalStatus" required>
+                    <option value="">انتخاب کنید...</option>
+                    <option value="مجرد">مجرد</option>
+                    <option value="متأهل">متأهل</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Children">تعداد فرزند:</label>
+                <input type="number" id="Children" name="Children" required min="0" max="10" value="0">
+            </div>
+            <div class="form-group">
+                <label for="Education">تحصیلات:</label>
+                <select id="Education" name="Education" required>
+                    <option value="">انتخاب کنید...</option>
+                    <option value="دیپلم و پایین‌تر">دیپلم و پایین‌تر</option>
+                    <option value="کاردانی">کاردانی</option>
+                    <option value="کارشناسی">کارشناسی</option>
+                    <option value="کارشناسی ارشد">کارشناسی ارشد</option>
+                    <option value="دکتری">دکتری</option>
+                </select>
+            </div>
+
+            <!-- بخش اول سوالات (DASS-21) -->
+            <h3>بخش اول</h3>
+            <div class="instruction">لطفاً مشخص کنید هر یک از جملات زیر تا چه اندازه در طی <b>هفته گذشته</b> برای شما صدق می‌کند.</div>
+            <div id="dassContainer"></div>
+
+            <!-- بخش دوم سوالات (خودبیمارانگاری) -->
+            <h3>بخش دوم</h3>
+            <div class="instruction">لطفاً با دقت به هر سوال پاسخ دهید و گزینه‌ای را انتخاب کنید که با شرایط شما همخوانی دارد.</div>
+            <div id="hypContainer"></div>
+
+            <button type="submit" id="submitBtn">ارسال پاسخ‌ها</button>
+        </form>
+    </div>
+
+    <!-- پیام نتیجه -->
+    <div id="resultSection" class="hidden result-box">
+        <h2 style="text-align: center; color: #28a745; margin-bottom: 20px;">✅ پاسخ‌های شما با موفقیت ثبت شد</h2>
+        
+        <div class="result-item">
+            <div class="result-title">تحلیل سطح افسردگی:</div>
+            <div class="result-text" id="depressionResult"></div>
+        </div>
+        
+        <div class="result-item">
+            <div class="result-title">تحلیل سطح اضطراب:</div>
+            <div class="result-text" id="anxietyResult"></div>
+        </div>
+        
+        <div class="result-item">
+            <div class="result-title">تحلیل نگرانی جسمانی (خودبیمارانگاری):</div>
+            <div class="result-text" id="hypochondriaResult"></div>
+        </div>
+        
+        <div class="disclaimer">
+            <b>توجه:</b> این نتایج صرفاً بر اساس پاسخ‌های شما به این پرسشنامه به دست آمده است و جایگزین تشخیص تخصصی روان‌شناس نیست. اگر احساس می‌کنید این نشانه‌ها بر زندگی روزمره شما تأثیر گذاشته است، لطفاً با یک متخصص سلامت روان مشورت کنید.
+        </div>
+    </div>
+</div>
+
+<script>
+    // ====================================================
+    // ⚠️ آدرس Web App خود را اینجا قرار دهید ⚠️
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyENTKYWDjZ8hxf0ZusY-vHdgZf2TQ4rY5BC6Dt-96GSBFQA8HfWLA2I5rOgNmRem46/exec'; 
+    // ====================================================
+
+    // 1. ساخت سوالات DASS-21 (کامل)
+    const dassQuestions = [
+        "برای من مشکل است که آرام بگیرم", "متوجه شده‌ام که دهانم خشک می‌شود", "فکر نمی‌کنم بتوانم هیچ نوع احساس خوبی را تجربه کنم", "تنفس کردن برای من مشکل می‌شود", "برای من سخت است که در انجام کارها پیشقدم شوم", "به موقعیت‌ها به‌طور افراطی واکنش نشان می‌دهم", "در بدنم احساس لرزش می‌کنم", "احساس می‌کنم انرژی روانی زیادی مصرف می‌کنم", "نگرانم مبادا در بعضی موقعیت‌ها دچار ترس شوم یا به کار احمقانه‌ای دست بزنم", "احساس می‌کنم چیزی ندارم که منتظر آن باشم", "خودم را پریشان و سردرگم احساس می‌کنم", "آرام بودن و در آرامش به‌سر بردن برای من مشکل است", "احساس دل‌مردگی و دلسردی دارم", "نسبت به هر چیزی که مرا از کار باز دارد بی‌تحمل هستم و صبر ندارم", "احساس می‌کنم هر لحظه ممکن است دچار ترس و وحشت شوم", "قادر نیستم درباره خیلی چیزها شور و شوق از خود نشان دهم", "احساس می‌کنم به عنوان یک فرد، ارزش زیادی ندارم", "فکر می‌کنم بسیار حساس و زودرنج هستم", "بدون آنکه هیچ‌گونه فعالیت بدنی انجام بدهم، متوجه شده‌ام که قلبم غیرعادی کار می‌کند", "بدون دلیل موجهی احساس ترس می‌کنم", "احساس می‌کنم زندگی بی‌معناست"
+    ];
+    
+    let dassHTML = '';
+    dassQuestions.forEach((q, index) => {
+        let num = index + 1;
+        dassHTML += `
+        <div class="question-block">
+            <div class="question-text">${num}. ${q}</div>
+            <div class="options">
+                <label><input type="radio" name="Q${num}" value="0" required> اصلاً</label>
+                <label><input type="radio" name="Q${num}" value="1"> کم</label>
+                <label><input type="radio" name="Q${num}" value="2"> زیاد</label>
+                <label><input type="radio" name="Q${num}" value="3"> خیلی زیاد</label>
+            </div>
+        </div>`;
+    });
+    document.getElementById('dassContainer').innerHTML = dassHTML;
+
+    // 2. ساخت سوالات خودبیمارانگاری (دقیقاً منطبق بر PDF)
+    const hypQuestions = [
+        { id: 1, text: "کدام یک از جمله‌های زیر توصیف دقیق‌تری از شرایط کلی جسمانی شما را ارائه می‌دهد؟", opts: ["کم و بیش از هر گونه بیماری جسمانی کاملاً رها هستم", "کاملاً سالم و تندرست هستم، فقط گاهی اوقات بیمار می‌شوم", "تقریباً سالم و تندرست هستم اما گاه وبیگاه به بیماری‌های کوچکی مبتلا می‌شوم", "تقریباً مستعد بیماری هستم و هیچگاه به طور کامل سالم و تندرست نیستم", "عموماً بیمار و در وضعیت نامناسبی به سر می‌برم"] },
+        { id: 2, text: "کدام یک از جمله‌های زیر توصیف دقیق‌تری از شرایط کلی روانی شما ارائه می‌دهد؟", opts: ["در همه حال کاملاً با نشاط و پرتوان و خوشبین هستم", "به طور کلی بسیار پر تحرک و خوشبین هستم", "گاهی با نشاط و سرحال هستم و گاهی هم این چنین نیستم", "در مجموع فاقد انرژی یا توان بوده و معمولاً دل مرده هستم", "در همه حال بی حوصله و تقریباً دل مرده هستم"] },
+        { id: 3, text: "تصور می‌کنید در مقایسه با گروه سنی خود، تا چه اندازه در معرض بیماری‌های گوناگون قرار داشته باشید؟", opts: ["خیلی زیاد", "تقریباً زیاد", "به طور یکسان", "تقریباً کم", "خیلی کم"] },
+        { id: 4, text: "آیا هرگز از نوعی لرزش مرموز یا تپش قلب رنج برده‌اید؟", opts: ["آری", "خیر"] },
+        { id: 5, text: "اگر پاسخ شما به سؤال ۴ مثبت است، در این صورت آیا تا آن اندازه نگران شده‌اید که درباره‌اش با پزشک مشورت کنید؟", opts: ["آری", "خیر"] },
+        { id: 6, text: "اگر پاسخ شما به سؤال ۵ مثبت است، در این صورت آیا پزشک بیماری خاصی در مورد قلب شما تشخیص داد؟", opts: ["آری", "خیر"] },
+        { id: 7, text: "اگر پاسخ شما به سؤال شمارۀ ۵ منفی است، در این صورت آیا این لرزش یا تپش قلب، همچنان موجب نگرانی شما است؟", opts: ["آری", "خیر"] },
+        { id: 8, text: "اگر با مجله‌ای مخصوص پزشکان یا حرفه پزشکی برخورد کنید، آیا با اشتیاق آن را مطالعه می‌کنید حتی اگر از مطلب آن چیز زیادی دستگیرتان نشود؟", opts: ["آری", "خیر"] },
+        { id: 9, text: "اگر پاسخ شما به سؤال ۸ مثبت است، در این صورت آیا از برخی بیماری‌هایی که در آن مجله شرح داده شده نگران می‌شوید؟", opts: ["آری", "خیر"] },
+        { id: 10, text: "آیا هیچگاه نگران این مطلب بوده‌اید که شاید مبتلا به برخی بیماری‌ها مانند سرطان یا سل باشید؟", opts: ["آری", "خیر"] },
+        { id: 11, text: "اگر پاسخ شما به سؤال شمارۀ ۱۰ مثبت است، در این صورت آیا به پزشک مراجعه کرده‌اید؟", opts: ["آری", "خیر"] },
+        { id: 12, text: "اگر پاسخ شما به سؤال شمارۀ ۱۱ مثبت است، در این صورت آیا پزشک سلامتی کاملتان را به شما خبر داد؟", opts: ["آری", "خیر"] },
+        { id: 13, text: "اگر پاسخ شما به سؤال شمارۀ ۱۱ منفی است، در این صورت آیا همچنان نگرانید که مبادا به این بیماری‌ها مبتلا شده باشید؟", opts: ["آری", "خیر"] },
+        { id: 14, text: "آیا قفسه یخچال شما پر از انواع داروهاست؟", opts: ["آری", "خیر"] },
+        { id: 15, text: "اگر پاسخ شما به سؤال شمارۀ ۱۴ مثبت است، در این صورت آیا این داروها شامل شربت‌ها، قرص‌ها و کپسول‌هایی است که مدت‌ها پیش تجویز شده‌اند و دلتان نمی‌آید آن‌ها را دور بریزید؟", opts: ["آری", "خیر"] },
+        { id: 16, text: "هر چند وقت، آسپرین مصرف می‌کنید؟ (در مورد خانم‌ها، غیر از دوران عادت ماهانه)", opts: ["هر روز", "یک یا دو بار در هفته", "یک یا دو بار در ماه", "یک یا دو بار در سال", "تقریباً هیچ وقت"] },
+        { id: 17, text: "آیا آسپرین توسط پزشک برای شما تجویز شده است؟", opts: ["آری", "خیر"] },
+        { id: 18, text: "آیا احساس می‌کنید ساخت یک شرکت دارویی خاص، خیلی بهتر از آسپرین شرکت‌های دارویی دیگر است؟", opts: ["آری", "خیر"] },
+        { id: 19, text: "آیا از تماشای سریال‌های تلویزیونی بیمارستانی بیش از سریال‌های پلیسی یا فیلم‌های غربی (وسترن) لذت می‌برید؟", opts: ["آری", "خیر"] },
+        { id: 20, text: "آیا اغلب از تنگی نفس، سرگیجه و از این قبیل رنج می‌برید؟", opts: ["آری", "خیر"] },
+        { id: 21, text: "با فرض بر اینکه دارای سلامت نسبی هستید، هر چند وقت برای چک آپ (معاینات) معمولی یا دلیل خاصی به پزشک مراجعه می‌کنید؟", opts: ["هر چند سال یکبار", "سالی یکبار", "دو مرتبه در سال", "سه یا چهار دفعه در سال", "هر ماه یا خیلی بیشتر"] },
+        { id: 22, text: "آیا هر روز ویتامین مصرف می‌کنید؟", opts: ["آری", "خیر"] },
+        { id: 23, text: "آیا به هنگامی که احساس ضعف و ناتوانی یا به نوعی احساس ناخوشی می‌کنید، ویتامین بیشتری مصرف می‌کنید؟", opts: ["آری", "خیر"] },
+        { id: 24, text: "آیا وقتی که در رستوران غذا می‌خورید، با مشاهده کوچکترین آلودگی یا کثیفی در پیرامونتان، اشتهایتان کور می‌شود؟", opts: ["آری", "خیر"] },
+        { id: 25, text: "اگر کسی به شما بگوید که به فلان بیماری مبتلا شده است، آیا می‌توانید بلافاصله به افرادی در خانواده (از جمله خودتان) بیندیشید که به همان بیماری مبتلا بوده است؟", opts: ["آری", "خیر"] },
+        { id: 26, text: "اگر پاسخ شما به سؤال شماره ۲۵ مثبت است، در این صورت آیا تمایل دارید به اینکه از جزئیات مداوای آن بیماری که در مورد شما یا اعضای خانواده‌تان صورت گرفت، برای او توضیح دهید؟", opts: ["آری", "خیر"] },
+        { id: 27, text: "وقتی سرما می‌خورید یا به گلو درد و دل درد مبتلا می‌شوید، آیا به نظر می‌رسد بیش از افرادی که به همین بیماری‌ها مبتلا می‌شوند، تحت تأثیر قرار می‌گیرید؟", opts: ["آری", "خیر"] },
+        { id: 28, text: "اگر پاسخ شما به سؤال شماره ۲۷ مثبت است، در این صورت آیا اجازه می‌دهید این امر به کار یا زندگی اجتماعی شما تأثیر بگذارد؟", opts: ["آری", "خیر"] },
+        { id: 29, text: "وقتی به بیماری‌هایی مبتلا می‌شوید آیا غیر از آنچه که پزشک تجویز کرده است، مواظبت و مراقبت بیشتری از خود به عمل می‌آورید؟", opts: ["آری", "خیر"] },
+        { id: 30, text: "اگر پاسخ شما به سؤال شماره ۲۹ مثبت است، در این صورت هنگامی که دوستان نیز به چنین بیماری‌هایی مبتلا می‌شوند، آیا بلافاصله همین مراقبت‌ها را به آنان هم توصیه می‌کنید؟", opts: ["آری", "خیر"] },
+        { id: 31, text: "تصور کنید فرصتی برایتان فراهم می‌شد تا یک عمل جراحی مهم مربوط به عمل روده را تماشا کنید. کدام یک از جمله‌های زیر به واکنش شما نزدیک‌تر است؟", opts: ["با اشتیاق از این فرصت استفاده می‌کنید زیرا همیشه دلتان می‌خواست بدانید چگونه چنین عملی صورت می‌گیرد", "با کنجکاوی از این فرصت استفاده می‌کنید زیرا بر این باورید که از دست دادن چنین فرصتی اشتباه است", "با بیم و هراس از این فرصت استفاده می‌کنید و از آن واهمه دارید شاید هنگام جراحی از حال بروید", "این فرصت را از دست می‌دهید زیرا می‌ترسید از حال بروید و یا شوکه شوید", "این فرصت را از دست می‌دهید زیرا فکر می‌کنید هرچه کمتر در این باره بدانید بهتر است", "از این فرصت استفاده نمی‌کنید چون هیچ علاقه‌ای به آن ندارید"] },
+        { id: 32, text: "آیا با دیدن خون، منقلب و ناراحت می‌شوید؟", opts: ["آری", "خیر"] },
+        { id: 33, text: "کدام یک از جمله‌های زیر به نگرش شما درباره \"داروهای انحصاری\" نزدیک‌تر است؟", opts: ["هرگز از آن‌ها استفاده نمی‌کنم", "گاهی اوقات بدون هیچ گونه دلیل خاصی از آن‌ها استفاده می‌کنم", "وقتی هیچ داروی دیگری مؤثر واقع نمی‌شود، گاهی آن‌ها را مصرف می‌کنم", "گاهی اوقات برای موارد خاصی از آن‌ها استفاده می‌کنم چون به واقع مؤثر هستند", "به طور مرتب از آن‌ها استفاده می‌کنم"] },
+        { id: 34, text: "یکی از دوستانتان را ملاقات می‌کنید و او شما را در جریان آخرین مشکلات پزشکی‌اش می‌گذارد، آیا:", opts: ["با حوصله به سخنانش گوش می‌دهید و اظهار همدردی می‌کنید", "با علاقه به سخنانش گوش می‌دهید و توصیه‌هایی نیز ارائه می‌کنید", "با بی صبری و ناشکیبایی به سخنانش گوش می‌دهید و هر آن فرصت یافتید، سخنش را قطع می‌کنید", "صبر می‌کنید تا سخنانش تمام شود و سپس سرگذشت بیماری خودتان را تعریف می‌کنید"] },
+        { id: 35, text: "برای اینکه ببینید بیمار شده‌اید یا نه، هر چند وقت حرارت بدن خود را کنترل می‌کنید؟", opts: ["هیچگاه", "تنها زمانی که فکر می‌کنید سرما خورده‌اید یا به بیماری دیگری مبتلا شده‌اید", "هر وقت که احساس ضعف و سستی می‌کنید", "به طور مرتب"] },
+        { id: 36, text: "هر چند وقت نبض خود را کنترل می‌کنید؟", opts: ["هیچگاه", "هر گاه که احساس ناخوشی می‌کنید", "هر وقت که هیجان زده و یا سراسیمه می‌شوید", "به طور مرتب"] }
+    ];
+
+    let hypHTML = '';
+    hypQuestions.forEach((q) => {
+        let optionsHTML = q.opts.map((opt, i) => `<label><input type="radio" name="H${q.id}" value="${i}" required> ${opt}</label>`).join('');
+        hypHTML += `
+        <div class="question-block">
+            <div class="question-text">${q.id}. ${q.text}</div>
+            <div class="options">${optionsHTML}</div>
+        </div>`;
+    });
+    document.getElementById('hypContainer').innerHTML = hypHTML;
+
+    // 3. منطق ارسال و محاسبه
+    const form = document.getElementById('surveyForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const formSection = document.getElementById('formSection');
+    const resultSection = document.getElementById('resultSection');
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'در حال ارسال و تحلیل...';
+
+        const formData = new FormData(form);
+        const dataObject = {};
+        
+        // محاسبه نمرات DASS (بر اساس 21 سوال)
+        let depScore = 0, anxScore = 0;
+        const depItems = [3, 5, 10, 13, 16, 17, 21];
+        const anxItems = [2, 4, 7, 9, 15, 19, 20];
+
+        formData.forEach((value, key) => {
+            dataObject[key] = value;
+            if (key.startsWith('Q')) {
+                let qNum = parseInt(key.replace('Q', ''));
+                let val = parseInt(value);
+                if (depItems.includes(qNum)) depScore += val;
+                if (anxItems.includes(qNum)) anxScore += val;
+            }
+        });
+
+        // ضرب در 2 برای نمره نهایی DASS-21
+        depScore *= 2;
+        anxScore *= 2;
+
+        // محاسبه نمره خودبیمارانگاری (دقیقاً طبق جدول امتیازات PDF)
+        let rawHypScore = 0;
+        
+        const hypScoring = {
+            1: [0, 0, 0, 1, 3],
+            2: [0, 0, 0, 1, 3],
+            3: [5, 1, 0, 0, 0],
+            4: [1, 0],
+            5: [3, 0],
+            6: [-4, 2],
+            7: [3, 0],
+            8: [1, 0],
+            9: [2, 0],
+            10: [1, 0],
+            11: [3, 0],
+            12: [2, 0],
+            13: [3, 0],
+            14: [1, 0],
+            15: [3, 0],
+            16: [5, 3, 1, 0, 0],
+            17: [-1, 0], 
+            18: [3, 0],
+            19: [3, 0],
+            20: [2, 0],
+            21: [0, 0, 1, 3, 5],
+            22: [1, 0],
+            23: [3, 0],
+            24: [2, 0],
+            25: [2, 0],
+            26: [2, 0],
+            27: [1, 0],
+            28: [2, 0],
+            29: [2, 0],
+            30: [3, 0],
+            31: [3, 0, 3, 0, 1, 0],
+            32: [1, 0],
+            33: [0, 1, 2, 3, 5],
+            34: [0, 2, 0, 3], 
+            35: [0, 0, 1, 3], 
+            36: [0, 1, 3, 5]  
+        };
+
+        for (let i = 1; i <= 36; i++) {
+            let val = parseInt(dataObject[`H${i}`]);
+            if (!isNaN(val) && hypScoring[i]) {
+                if (i === 17 && val === 0) {
+                    let q16Val = parseInt(dataObject['H16']);
+                    rawHypScore -= hypScoring[16][q16Val];
+                } else {
+                    rawHypScore += hypScoring[i][val];
+                }
+            }
+        }
+        
+        // اصلاح سن
+        const age = parseInt(dataObject['Age']);
+        let ageCorrection = 0;
+        if (age < 30) ageCorrection = 5;
+        else if (age >= 30 && age < 40) ageCorrection = 3;
+        else if (age >= 40 && age < 60) ageCorrection = 0;
+        else if (age >= 60 && age <= 70) ageCorrection = -3;
+        else if (age > 70) ageCorrection = -5;
+
+        const finalHypScore = rawHypScore + ageCorrection;
+
+        // ارسال به گوگل شیت
+        fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8'
+            },
+            body: JSON.stringify(dataObject)
+        })
+        .then(() => {
+            // در حالت no-cors پاسخ سرور برای مرورگر قابل خواندن نیست.
+            // رسیدن درخواست بدون خطای شبکه به معنی ارسال درخواست است،
+            // نه تأیید قطعی ثبت در Google Sheets.
+            showResults(depScore, anxScore, finalHypScore);
+        })
+        .catch(error => {
+            console.error('خطای ارسال:', error);
+            alert('ارسال اطلاعات با مشکل مواجه شد. اتصال اینترنت را بررسی و دوباره تلاش کنید.');
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'ارسال پاسخ‌ها';
+        });
+    });
+
+    function showResults(dep, anx, hyp) {
+        // متن‌های افسردگی
+        let depText = "";
+        if (dep <= 9) depText = "نمره شما نشان می‌دهد که در حال حاضر نشانه‌های قابل توجهی از افسردگی در شما دیده نمی‌شود. به نظر می‌رسد از نظر خلق و خو در وضعیت مناسبی قرار دارید.";
+        else if (dep <= 13) depText = "نمره شما نشان می‌دهد که ممکن است نشانه‌های خفیف افسردگی را تجربه کنید. این وضعیت معمولاً با کمی استراحت یا گفتگو با یک دوست قابل مدیریت است.";
+        else if (dep <= 20) depText = "نمره شما نشان می‌دهد که نشانه‌های متوسط افسردگی در شما وجود دارد. ممکن است احساس دل‌مردگی یا از دست دادن علاقه به کارهای روزمره را تجربه کرده باشید. پیشنهاد می‌شود برای جلوگیری از تشدید این حالت، با یک مشاور یا روان‌شناس صحبت کنید.";
+        else if (dep <= 27) depText = "نمره شما نشان می‌دهد که نشانه‌های شدید افسردگی در شما دیده می‌شود. این نشانه‌ها می‌توانند بر کیفیت زندگی شما تأثیر بگذارند. اکیداً توصیه می‌شود با یک روان‌شناس مشورت کنید.";
+        else depText = "نمره شما نشان می‌دهد که نشانه‌های بسیار شدید افسردگی در شما وجود دارد. لطفاً برای دریافت حمایت تخصصی، در اسرع وقت با یک متخصص سلامت روان تماس بگیرید.";
+
+        // متن‌های اضطراب
+        let anxText = "";
+        if (anx <= 7) anxText = "نمره شما نشان می‌دهد که در حال حاضر نشانه‌های نگران‌کننده‌ای از اضطراب در شما دیده نمی‌شود. به نظر می‌رسد توانایی خوبی در مدیریت استرس‌های روزمره دارید.";
+        else if (anx <= 9) anxText = "نمره شما نشان می‌دهد که ممکن است نشانه‌های خفیف اضطراب را تجربه کنید. تمرین‌های آرام‌سازی و تنفس عمیق می‌تواند به شما کمک کند.";
+        else if (anx <= 14) anxText = "نمره شما نشان می‌دهد که نشانه‌های متوسط اضطراب در شما وجود دارد. ممکن است در برخی موقعیت‌ها احساس نگرانی شدید یا تنش داشته باشید. یادگیری تکنیک‌های مدیریت استرس و مشورت با یک متخصص می‌تواند بسیار مفید باشد.";
+        else if (anx <= 19) anxText = "نمره شما نشان می‌دهد که نشانه‌های شدید اضطراب در شما دیده می‌شود. نگرانی‌های مداوم می‌تواند بسیار خسته‌کننده باشد. توصیه می‌شود برای دریافت راهنمایی‌های تخصصی با یک روان‌شناس در ارتباط باشید.";
+        else anxText = "نمره شما نشان می‌دهد که نشانه‌های بسیار شدید اضطراب در شما وجود دارد. لطفاً برای دریافت حمایت فوری با یک متخصص سلامت روان مشورت کنید.";
+
+        // متن‌های خودبیمارانگاری
+        let hypText = "";
+        if (hyp <= 10) hypText = "نمره شما نشان می‌دهد که نسبت به تغییرات جسمانی خود کاملاً بی‌توجه هستید یا از سلامت کامل برخوردارید. این یک حالت نرمال است.";
+        else if (hyp <= 20) hypText = "نمره شما در محدوده هنجار است. شما هم مانند اکثر افراد گهگاه نگرانی‌هایی درباره سلامت خود دارید، اما این نگرانی‌ها آنقدر نیست که مشکلی ایجاد کند.";
+        else if (hyp <= 30) hypText = "نمره شما نشان می‌دهد که نسبت به بیماری‌های کوچک بیش از اندازه حساسیت به خرج می‌دهید. تا زمانی که این موضوع مانع مراجعه شما به پزشک در مواقع لازم نشود، مشکلی نیست.";
+        else if (hyp <= 40) hypText = "نمره شما نشان می‌دهد که تا حدودی خود را بیمار می‌انگارید و در مورد سلامتی خود نگرانی‌های بیشتری نسبت به سایرین دارید.";
+        else if (hyp <= 60) hypText = "نمره شما نشان می‌دهد که به طور جدی خود را بیمار می‌انگارید و احتمالاً علاقه زیادی به امور پزشکی و داروها دارید. توصیه می‌شود با یک روان‌شناس درباره این نگرانی‌ها صحبت کنید.";
+        else hypText = "نمره شما نشان می‌دهد که سطح نگرانی شما درباره سلامت جسمانی در بالاترین حد قرار دارد. بهتر است برای یک معاینه پزشکی کامل اقدام کنید و سپس برای مدیریت اضطراب ناشی از آن، از یک متخصص روان‌شناسی کمک بگیرید.";
+
+        // تزریق متن‌ها به HTML
+        document.getElementById('depressionResult').innerText = depText;
+        document.getElementById('anxietyResult').innerText = anxText;
+        document.getElementById('hypochondriaResult').innerText = hypText;
+
+        // جابه‌جایی نمایش
+        formSection.classList.add('hidden');
+        resultSection.classList.remove('hidden');
+        window.scrollTo(0, 0);
+    }
+</script>
+
+</body>
+</html>
