@@ -89,6 +89,11 @@
         .support-box b { color: #6d1616; }
         .disclaimer { background: #fff3cd; color: #856404; padding: 15px; border-radius: 10px; font-size: 13px; margin-top: 22px; text-align: justify; border: 1px solid #ffeeba; }
 
+        .cta-card { background: linear-gradient(135deg, #f1f8f8, #fbf6e8); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; margin-top: 18px; text-align: center; }
+        .cta-card.strong { border: 2px solid var(--turq); box-shadow: 0 6px 20px rgba(15,139,141,.18); }
+        .cta-card h4 { margin: 0 0 6px; color: var(--lapis); font-size: 17px; }
+        .cta-card p { margin: 0 0 12px; font-size: 13.5px; color: #4b5866; }
+        a.cta-btn { display: inline-block; background: linear-gradient(135deg, var(--turq), var(--lapis)); color: #fff; text-decoration: none; font-weight: 700; padding: 12px 28px; border-radius: 12px; box-shadow: 0 6px 16px rgba(15,139,141,.3); }
         @media (max-width: 520px) {
             #surveyForm, .result-body { padding: 0 14px; }
             .progress-wrap { padding: 10px 14px; }
@@ -100,7 +105,7 @@
         @media print {
             body { background: #fff; padding: 0; }
             .container { box-shadow: none; border: none; }
-            .btn-outline { display: none !important; }
+            .btn-outline, .cta-card { display: none !important; }
         }
     </style>
 </head>
@@ -192,6 +197,11 @@
                 در شرایط خطر فوری با اورژانس <b>۱۱۵</b> تماس بگیرید.
             </div>
             <div id="resultCards"></div>
+            <div id="bookCta" class="cta-card">
+                <h4>💬 گفتگو با روان‌شناس</h4>
+                <p id="bookCtaText">اگر دوست دارید درباره‌ی نتایج و احساس‌های خود با یک روان‌شناس صحبت کنید، می‌توانید همین‌جا وقت مشاوره (غیرحضوری) رزرو کنید.</p>
+                <a class="cta-btn" href="booking.html">رزرو وقت مشاوره</a>
+            </div>
             <div class="disclaimer">
                 <b>توجه:</b> این نتایج صرفاً بر اساس پاسخ‌های شما به این پرسشنامه به دست آمده است و جایگزین تشخیص تخصصی روان‌شناس نیست. اگر احساس می‌کنید این نشانه‌ها بر زندگی روزمره شما تأثیر گذاشته است، لطفاً با یک متخصص سلامت روان مشورت کنید.
             </div>
@@ -631,6 +641,18 @@
         const q21 = form.querySelector('input[name="Q21"]:checked');
         const needSupport = levels.dep >= 3 || levels.anx >= 3 || (q21 && parseInt(q21.value) >= 2);
         document.getElementById('supportBox').classList.toggle('hidden', !needSupport);
+
+        // ذخیره‌ی سطح‌ها برای صفحه‌ی رزرو (فقط با رضایت کاربر در همان صفحه ارسال می‌شود)
+        try {
+            sessionStorage.setItem('qLevels', JSON.stringify({
+                dep: resultDefs.dep.bands[levels.dep].label,
+                anx: resultDefs.anx.bands[levels.anx].label,
+                hyp: resultDefs.hyp.bands[levels.hyp].label
+            }));
+        } catch (e) {}
+        const cta = document.getElementById('bookCta');
+        cta.classList.toggle('strong', needSupport);
+        if (needSupport) document.getElementById('bookCtaText').textContent = 'نتایج شما نشان می‌دهد که صحبت با یک روان‌شناس می‌تواند برایتان مفید باشد. می‌توانید همین حالا وقت مشاوره (غیرحضوری) رزرو کنید.';
 
         formSection.classList.add('hidden');
         resultSection.classList.remove('hidden');
