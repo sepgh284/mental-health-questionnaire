@@ -761,8 +761,15 @@ textarea {
 
   <div class="field">
     <label for="transactionDateTime">تاریخ و ساعت دقیق تراکنش <span class="required">*</span></label>
-    <input id="transactionDateTime" type="datetime-local">
-    <div class="hint">تاریخ و ساعت درج‌شده در رسید بانکی را وارد کنید.</div>
+    <input
+      id="transactionDateTime"
+      type="text"
+      inputmode="text"
+      autocomplete="off"
+      maxlength="100"
+      placeholder="مثلاً ۱۴۰۵/۰۸/۱۱ ساعت ۱۵:۳۰"
+    >
+    <div class="hint">تاریخ و ساعت را دقیقاً مطابق رسید وارد کنید؛ شمسی یا میلادی بودن آن فرقی ندارد.</div>
   </div>
 
   <div class="field">
@@ -1093,37 +1100,21 @@ function validateStep2() {
 function validatePayment() {
   if (!$('paymentDone').checked) return true;
 
-  if (!$('transactionDateTime').value) {
+  const transactionText = $('transactionDateTime').value.trim();
+
+  if (!transactionText) {
     showMessage('لطفاً تاریخ و ساعت دقیق تراکنش را وارد کنید.');
     $('transactionDateTime').focus();
     return false;
   }
 
-  const transactionDate = new Date($('transactionDateTime').value);
-
-  if (isNaN(transactionDate.getTime())) {
-    showMessage('تاریخ و ساعت تراکنش معتبر نیست.');
-    return false;
-  }
-
-  if (transactionDate.getTime() > Date.now() + 5 * 60 * 1000) {
-    showMessage('زمان تراکنش نمی‌تواند در آینده باشد.');
-    return false;
-  }
-
+  // تاریخ به‌صورت متن نگهداری می‌شود؛ هیچ تبدیل شمسی/میلادی انجام نمی‌شود.
   return true;
 }
 
 function formatTransactionDate() {
-  const value = $('transactionDateTime').value;
-  if (!value) return 'ثبت نشده';
-
-  const date = new Date(value);
-
-  return new Intl.DateTimeFormat('fa-IR',{
-    dateStyle:'long',
-    timeStyle:'short'
-  }).format(date);
+  const value = $('transactionDateTime').value.trim();
+  return value || 'ثبت نشده';
 }
 
 function renderSummary() {
@@ -1217,7 +1208,7 @@ function collectData() {
 
     paymentDone:$('paymentDone').checked,
     paymentBank:$('paymentBank').value,
-    transactionDateTime:$('transactionDateTime').value,
+    transactionDateTime:$('transactionDateTime').value.trim(),
     transactionDateTimeLabel:formatTransactionDate(),
     receiptFileName:receiptFile ? receiptFile.name : '',
 
